@@ -33,6 +33,10 @@ Trackers
 -----------
 Not implementet yet. Planned trackers: Blink (Flash etc.), Clone, Cooldown, Objects (Shrooms, Traps etc.), Recall, Wards, Waypoint
 
+Trinkets
+-----------
+Automatically buy / switch trinkes based on timers & events.
+
 Timers
 -----------
 Not implementet yet. Planned timers: Immune, Jungle, Objects (Altar, Health, Inhibitor)
