@@ -1,4 +1,26 @@
-﻿namespace SFXUtility.Feature
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ AutoLeveler.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility.Feature
 {
     #region
 
@@ -14,12 +36,6 @@
 
     internal class AutoLeveler : Base
     {
-        #region Fields
-
-        private Menu _menu;
-
-        #endregion
-
         #region Constructors
 
         public AutoLeveler(IContainer container) : base(container)
@@ -33,7 +49,7 @@
 
         public override bool Enabled
         {
-            get { return _menu != null && _menu.Item("Enabled").GetValue<bool>(); }
+            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
         }
 
         public override string Name
@@ -52,17 +68,17 @@
                 new MenuInfo
                 {
                     Slot = SpellSlot.Q,
-                    Value = _menu.Item("Q").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternQ").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.W,
-                    Value = _menu.Item("W").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternW").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.E,
-                    Value = _menu.Item("E").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternE").GetValue<Slider>().Value
                 }
             }.OrderBy(x => x.Value).Reverse().First(s => s.Value == priority);
         }
@@ -74,17 +90,17 @@
                 new MenuInfo
                 {
                     Slot = SpellSlot.Q,
-                    Value = _menu.Item("Q").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternQ").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.W,
-                    Value = _menu.Item("W").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternW").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.E,
-                    Value = _menu.Item("E").GetValue<Slider>().Value
+                    Value = Menu.Item("PatternE").GetValue<Slider>().Value
                 }
             }.OrderBy(x => x.Value).Reverse().ToList();
         }
@@ -94,22 +110,27 @@
             Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
-                _menu = new Menu(Name, Name);
+                Menu = new Menu(Name, Name);
 
-                _menu.AddItem(new MenuItem("Pattern", "Early Pattern").SetValue(new StringList(new[]
+
+                var patternMenu = new Menu("Pattern", "Pattern");
+                patternMenu.AddItem(new MenuItem("PatternEarly", "Early Pattern").SetValue(new StringList(new[]
                 {
                     "x 2 3 1",
                     "x 2 1",
                     "x 1 3",
                     "x 1 2"
                 })));
-                _menu.AddItem(new MenuItem("Q", "Q").SetValue(new Slider(3, 3, 1)));
-                _menu.AddItem(new MenuItem("W", "W").SetValue(new Slider(1, 3, 1)));
-                _menu.AddItem(new MenuItem("E", "E").SetValue(new Slider(2, 3, 1)));
+                patternMenu.AddItem(new MenuItem("PatternQ", "Q").SetValue(new Slider(3, 3, 1)));
+                patternMenu.AddItem(new MenuItem("PatternW", "W").SetValue(new Slider(1, 3, 1)));
+                patternMenu.AddItem(new MenuItem("PatternE", "E").SetValue(new Slider(2, 3, 1)));
 
-                _menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddSubMenu(patternMenu);
 
-                BaseMenu.AddSubMenu(_menu);
+                Menu.AddItem(new MenuItem("OnlyR", "Only R").SetValue(false));
+                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(false));
+
+                BaseMenu.AddSubMenu(Menu);
 
                 CustomEvents.Unit.OnLevelUp += OnLevelUp;
             }
@@ -127,18 +148,23 @@
             {
                 if (!sender.IsValid || !sender.IsMe)
                     return;
-                Utility.Map.MapType map = Utility.Map.GetMap();
+
+                Utility.Map.MapType map = Utility.Map.GetMap()._MapType;
 
                 if ((map == Utility.Map.MapType.SummonersRift || map == Utility.Map.MapType.TwistedTreeline) &&
-                    args.NewLevel == 1)
+                    args.NewLevel <= 1)
                     return;
 
                 if ((map == Utility.Map.MapType.CrystalScar || map == Utility.Map.MapType.HowlingAbyss) &&
-                    args.NewLevel == 3)
+                    args.NewLevel <= 3)
                     return;
 
                 ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.R);
-                var patternIndex = _menu.Item("Pattern").GetValue<StringList>().SelectedIndex;
+
+                if (Menu.Item("OnlyR").GetValue<bool>())
+                    return;
+
+                var patternIndex = Menu.Item("PatternEarly").GetValue<StringList>().SelectedIndex;
                 MenuInfo mf = null;
                 switch (args.NewLevel)
                 {

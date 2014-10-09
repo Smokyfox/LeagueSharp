@@ -1,15 +1,38 @@
-﻿namespace SFXUtility.Feature
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ LasthitMarker.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility.Feature
 {
     #region
 
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Linq;
     using Class;
     using IoCContainer;
     using LeagueSharp;
     using LeagueSharp.Common;
+    using SharpDX;
+    using Color = System.Drawing.Color;
 
     #endregion
 
@@ -17,8 +40,7 @@
     {
         #region Fields
 
-        private List<Obj_AI_Minion> _killableMinions = new List<Obj_AI_Minion>();
-        private Menu _menu;
+        private List<Obj_AI_Minion> _minions = new List<Obj_AI_Minion>();
 
         #endregion
 
@@ -36,7 +58,12 @@
 
         public override bool Enabled
         {
-            get { return _menu != null && _menu.Item("Enabled").GetValue<bool>(); }
+            get
+            {
+                return Menu != null && Menu.Item("Enabled").GetValue<bool>() &&
+                       (Menu.Item("DrawingHpBarEnabled").GetValue<bool>() ||
+                        Menu.Item("DrawingCircleEnabled").GetValue<bool>());
+            }
         }
 
         public override string Name
@@ -54,15 +81,32 @@
                 return;
             try
             {
-                var color = _menu.Item("DrawingColor").GetValue<Color>();
-                var radius = _menu.Item("DrawingRadius").GetValue<Slider>().Value;
+                var circleColor = Menu.Item("DrawingCircleColor").GetValue<Color>();
+                var hpKillableColor = Menu.Item("DrawingHpBarKillableColor").GetValue<Color>();
+                var hpUnkillableColor = Menu.Item("DrawingHpBarUnkillableColor").GetValue<Color>();
+                var hpLinesThickness = Menu.Item("DrawingHpBarLinesThickness").GetValue<Slider>().Value;
+                var radius = Menu.Item("DrawingCircleRadius").GetValue<Slider>().Value;
                 var circleThickness = BaseMenu.Item("MiscCircleThickness").GetValue<Slider>().Value;
-                var circleQuality = BaseMenu.Item("MiscCircleQuality").GetValue<Slider>().Value;
 
-                foreach (Obj_AI_Minion minion in _killableMinions)
+                foreach (Obj_AI_Minion minion in _minions.Where(minion => minion.Team != GameObjectTeam.Neutral))
                 {
-                    Utility.DrawCircle(minion.Position, minion.BoundingRadius + radius, color, circleThickness,
-                        circleQuality);
+                    var aaDamage = ObjectManager.Player.GetAutoAttackDamage(minion, true);
+                    var killable = minion.Health <= aaDamage;
+                    if (Menu.Item("DrawingHpBarEnabled").GetValue<bool>() && minion.IsHPBarRendered)
+                    {
+                        var barPos = minion.HPBarPosition;
+                        var offset = 62/(minion.MaxHealth/aaDamage);
+                        offset = offset > 62 ? 62 : offset;
+                        var tmpThk = (int) (62 - offset);
+                        hpLinesThickness = tmpThk > hpLinesThickness ? hpLinesThickness : (tmpThk == 0 ? 1 : tmpThk);
+                        Drawing.DrawLine(new Vector2(barPos.X + 45 + (float) offset, barPos.Y + 18),
+                            new Vector2(barPos.X + 45 + (float) offset, barPos.Y + 23), hpLinesThickness,
+                            killable ? hpKillableColor : hpUnkillableColor);
+                    }
+                    if (Menu.Item("DrawingCircleEnabled").GetValue<bool>() && killable)
+                    {
+                        Utility.DrawCircle(minion.Position, minion.BoundingRadius + radius, circleColor, circleThickness);
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,23 +120,38 @@
             Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
-                _menu = new Menu(Name, Name);
+                Menu = new Menu(Name, Name);
 
                 var drawingMenu = new Menu("Drawing", "Drawing");
-                drawingMenu.AddItem(new MenuItem("DrawingColor", "Color").SetValue(Color.Fuchsia));
-                drawingMenu.AddItem(new MenuItem("DrawingRadius", "Circle Radius").SetValue(new Slider(30)));
+
+                var drawingHpBarMenu = new Menu("HPBar", "HPBar");
+                drawingHpBarMenu.AddItem(
+                    new MenuItem("DrawingHpBarKillableColor", "Killable Color").SetValue(Color.Green));
+                drawingHpBarMenu.AddItem(
+                    new MenuItem("DrawingHpBarUnkillableColor", "Unkillable Color").SetValue(Color.White));
+                drawingHpBarMenu.AddItem(
+                    new MenuItem("DrawingHpBarLinesThickness", "Lines Thickness").SetValue(new Slider(1, 1, 10)));
+                drawingHpBarMenu.AddItem(new MenuItem("DrawingHpBarEnabled", "Enabled").SetValue(true));
+
+                var drawingCirclesMenu = new Menu("Circle", "Circle");
+                drawingCirclesMenu.AddItem(new MenuItem("DrawingCircleColor", "Circle Color").SetValue(Color.Fuchsia));
+                drawingCirclesMenu.AddItem(new MenuItem("DrawingCircleRadius", "Circle Radius").SetValue(new Slider(30)));
+                drawingCirclesMenu.AddItem(new MenuItem("DrawingCircleEnabled", "Enabled").SetValue(true));
+
+                drawingMenu.AddSubMenu(drawingHpBarMenu);
+                drawingMenu.AddSubMenu(drawingCirclesMenu);
 
                 var distanceMenu = new Menu("Distance", "Distance");
                 distanceMenu.AddItem(new MenuItem("DistanceEnabled", "Limit by Distance").SetValue(true));
                 distanceMenu.AddItem(
                     new MenuItem("DistanceLimit", "Distance Limit").SetValue(new Slider(1000, 500, 3000)));
 
-                _menu.AddSubMenu(drawingMenu);
-                _menu.AddSubMenu(distanceMenu);
+                Menu.AddSubMenu(drawingMenu);
+                Menu.AddSubMenu(distanceMenu);
 
-                _menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
 
-                BaseMenu.AddSubMenu(_menu);
+                BaseMenu.AddSubMenu(Menu);
 
                 Game.OnGameUpdate += OnGameUpdate;
                 Drawing.OnDraw += OnDraw;
@@ -110,19 +169,13 @@
                 return;
             try
             {
-                List<Obj_AI_Minion> list = (from minion in ObjectManager.Get<Obj_AI_Minion>()
-                    where minion.IsValidTarget() && minion.Health > 1f
+                _minions = (from minion in ObjectManager.Get<Obj_AI_Minion>()
+                    where minion.IsValidTarget() && minion.Health > 0.1f
                     where
-                        !_menu.Item("DistanceEnabled").GetValue<bool>() ||
+                        !Menu.Item("DistanceEnabled").GetValue<bool>() ||
                         minion.Distance(ObjectManager.Player.Position) <=
-                        _menu.Item("DistanceLimit").GetValue<Slider>().Value
-                    where
-                        minion.Health <=
-                        DamageLib.CalcPhysicalMinionDmg(
-                            ObjectManager.Player.BaseAttackDamage + ObjectManager.Player.FlatPhysicalDamageMod - 1,
-                            minion, true)
+                        Menu.Item("DistanceLimit").GetValue<Slider>().Value
                     select minion).ToList();
-                _killableMinions = list;
             }
             catch (Exception ex)
             {

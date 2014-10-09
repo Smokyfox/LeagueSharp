@@ -1,4 +1,26 @@
-﻿namespace SFXUtility.Feature
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ AutoPotion.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility.Feature
 {
     #region
 
@@ -15,8 +37,6 @@
     internal class AutoPotion : Base
     {
         #region Fields
-
-        private Menu _menu;
 
         private List<Potion> _potions = new List<Potion>
         {
@@ -48,7 +68,7 @@
             {
                 BuffName = "ItemMiniRegenPotion",
                 MinCharges = 0,
-                ItemId = (ItemId) Item.Pot.TotalBiscuitOfRejuvenation2,
+                ItemId = (ItemId) Item.Pot.TotalBiscuitOfRejuvenation,
                 Priority = 4,
                 TypeList = new List<PotionType> {PotionType.Health, PotionType.Mana}
             }
@@ -79,7 +99,7 @@
 
         public override bool Enabled
         {
-            get { return _menu != null && _menu.Item("Enabled").GetValue<bool>(); }
+            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
         }
 
         public override string Name
@@ -114,7 +134,7 @@
             {
                 _potions = _potions.OrderBy(x => x.Priority).ToList();
 
-                _menu = new Menu(Name, Name);
+                Menu = new Menu(Name, Name);
 
                 var healthMenu = new Menu("Health", "Health");
                 healthMenu.AddItem(new MenuItem("HealthPotion", "Use Health Potion").SetValue(true));
@@ -124,12 +144,12 @@
                 manaMenu.AddItem(new MenuItem("ManaPotion", "Use Mana Potion").SetValue(true));
                 manaMenu.AddItem(new MenuItem("ManaPercent", "MP Trigger Percent").SetValue(new Slider(60)));
 
-                _menu.AddSubMenu(healthMenu);
-                _menu.AddSubMenu(manaMenu);
+                Menu.AddSubMenu(healthMenu);
+                Menu.AddSubMenu(manaMenu);
 
-                _menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(false));
 
-                BaseMenu.AddSubMenu(_menu);
+                BaseMenu.AddSubMenu(Menu);
 
                 Game.OnGameUpdate += OnGameUpdate;
             }
@@ -145,9 +165,9 @@
                 return;
             try
             {
-                if (_menu.Item("HealthPotion").GetValue<Boolean>())
+                if (Menu.Item("HealthPotion").GetValue<bool>())
                 {
-                    if (ObjectManager.Player.HealthPercentage() <= _menu.Item("HealthPercent").GetValue<Slider>().Value)
+                    if (ObjectManager.Player.HealthPercentage() <= Menu.Item("HealthPercent").GetValue<Slider>().Value)
                     {
                         InventorySlot healthSlot = GetPotionSlot(PotionType.Health);
                         if (healthSlot != null && !IsBuffActive(PotionType.Health))
@@ -155,9 +175,9 @@
                     }
                 }
 
-                if (_menu.Item("ManaPotion").GetValue<Boolean>())
+                if (Menu.Item("ManaPotion").GetValue<bool>())
                 {
-                    if (ObjectManager.Player.ManaPercentage() <= _menu.Item("ManaPercent").GetValue<Slider>().Value)
+                    if (ObjectManager.Player.ManaPercentage() <= Menu.Item("ManaPercent").GetValue<Slider>().Value)
                     {
                         InventorySlot manaSlot = GetPotionSlot(PotionType.Mana);
                         if (manaSlot != null && !IsBuffActive(PotionType.Mana))

@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- ILogger.cs is part of SFXUtility.
+ Trackers.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,28 +20,31 @@
 
 #endregion
 
-namespace SFXUtility.Logger
+namespace SFXUtility.Feature
 {
     #region
 
-    using System;
+    using Class;
+    using IoCContainer;
 
     #endregion
 
-    internal interface ILogger : IDisposable
+    internal class Trackers : BaseExt
     {
-        #region Properties
+        #region Constructors
 
-        string Prefix { get; set; }
+        public Trackers(IContainer container) : base(container)
+        {
+        }
 
         #endregion
 
-        #region Methods
+        #region Properties
 
-        void Write(string message);
-
-        void WriteBlock(string header, string message);
-        void WriteLine(string message);
+        public override string Name
+        {
+            get { return "Trackers"; }
+        }
 
         #endregion
     }

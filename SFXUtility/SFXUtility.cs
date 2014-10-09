@@ -1,28 +1,41 @@
-﻿namespace SFXUtility
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ SFXUtility.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility
 {
     #region
 
     using System;
     using Class;
-    using IoCContainer;
     using LeagueSharp.Common;
 
     #endregion
 
     internal class SFXUtility
     {
-        #region Fields
-
-        private readonly IContainer _container;
-
-        #endregion
-
         #region Constructors
 
-        public SFXUtility(IContainer container)
+        public SFXUtility()
         {
-            _container = container;
-
             Menu = new Menu(Name, Name, true);
 
             var miscMenu = new Menu("Misc", "Misc");
@@ -38,11 +51,9 @@
 
             miscMenu.AddSubMenu(infoMenu);
 
-            miscMenu.AddItem(new MenuItem("MiscCircleQuality", "Circles Quality").SetValue(new Slider(20, 80, 3)));
             miscMenu.AddItem(new MenuItem("MiscCircleThickness", "Circles Thickness").SetValue(new Slider(3, 10, 1)));
 
             Menu.AddSubMenu(miscMenu);
-
             AppDomain.CurrentDomain.DomainUnload += OnExit;
             AppDomain.CurrentDomain.ProcessExit += OnExit;
             CustomEvents.Game.OnGameEnd += OnGameEnd;
@@ -68,7 +79,7 @@
 
         public Version Version
         {
-            get { return new Version(0, 5, 0); }
+            get { return new Version(0, 6, 0); }
         }
 
         #endregion
@@ -88,14 +99,7 @@
 
         private void OnGameLoad(EventArgs args)
         {
-            Chat.Print(string.Format("{0} v{1} loaded.", Name, string.Format("{0}.{1}", Version.Major, Version.Minor) +
-                                                               (Version.Minor > 0
-                                                                   ? string.Format(".{0}", Version.Minor)
-                                                                   : string.Empty)));
-            //using (var updater = new Updater(_container.Resolve<ILogger>(), new Uri("versionUri"), new Uri("updateUri"), Version))
-            //{
-            //    updater.Update();
-            //}
+            Chat.Print(string.Format("{0} v{1}.{2}.{3} loaded.", Name, Version.Major, Version.Minor, Version.Build));
             Menu.AddToMainMenu();
         }
 

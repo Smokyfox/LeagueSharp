@@ -1,4 +1,26 @@
-﻿namespace SFXUtility.Feature
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ Humanizer.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility.Feature
 {
     #region
 
@@ -16,7 +38,6 @@
 
         private float _lastMovement;
         private float _lastSpell;
-        private Menu _menu;
 
         #endregion
 
@@ -34,7 +55,7 @@
 
         public override bool Enabled
         {
-            get { return _menu != null && _menu.Item("Enabled").GetValue<bool>(); }
+            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
         }
 
         public override string Name
@@ -51,17 +72,17 @@
             Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
-                _menu = new Menu(Name, Name);
+                Menu = new Menu(Name, Name);
 
                 var delayMenu = new Menu("Delay", "Delay");
-                delayMenu.AddItem(new MenuItem("DelaySpells", "Spells (ms)").SetValue(new Slider(20, 0, 250)));
-                delayMenu.AddItem(new MenuItem("DelayMovement", "Movement (ms)").SetValue(new Slider(20, 0, 250)));
+                delayMenu.AddItem(new MenuItem("DelaySpells", "Spells (ms)").SetValue(new Slider(50, 0, 250)));
+                delayMenu.AddItem(new MenuItem("DelayMovement", "Movement (ms)").SetValue(new Slider(50, 0, 250)));
 
-                _menu.AddSubMenu(delayMenu);
+                Menu.AddSubMenu(delayMenu);
 
-                _menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
 
-                BaseMenu.AddSubMenu(_menu);
+                BaseMenu.AddSubMenu(Menu);
 
                 Game.OnGameSendPacket += OnGameSendPacket;
             }
@@ -78,8 +99,8 @@
 
             try
             {
-                var spellsDelay = _menu.Item("DelaySpells").GetValue<Slider>().Value;
-                var movementDelay = _menu.Item("DelayMovement").GetValue<Slider>().Value;
+                var spellsDelay = Menu.Item("DelaySpells").GetValue<Slider>().Value;
+                var movementDelay = Menu.Item("DelayMovement").GetValue<Slider>().Value;
 
                 if (spellsDelay > 0 && (new GamePacket(args.PacketData)).Header == Packet.C2S.Cast.Header)
                 {

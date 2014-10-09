@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{2D7486BB-8A00-4CDB-AE64-8BF17463B518}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -11,13 +11,16 @@
     <AssemblyName>SFXUtility</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,39 +29,58 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LeagueSharp">
-      <HintPath>..\..\..\..\..\Desktop\LeagueSharp\Assemblies\System\LeagueSharp.dll</HintPath>
+    <Reference Include="LeagueSharp, Version=1.0.0.25, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>G:\LeagueSharp\System\LeagueSharp.dll</HintPath>
     </Reference>
-    <Reference Include="LeagueSharp.Common">
-      <HintPath>..\..\..\..\..\Desktop\LeagueSharp\Assemblies\System\LeagueSharp.Common.dll</HintPath>
+    <Reference Include="LeagueSharp.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>G:\LeagueSharp\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\Desktop\LeagueSharp\Assemblies\System\SharpDX.dll</HintPath>
+    <Reference Include="SharpDX, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>G:\LeagueSharp\System\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>G:\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\BaseExt.cs" />
     <Compile Include="Class\Chat.cs" />
+    <Compile Include="Class\HeroSpell.cs" />
     <Compile Include="Class\Item.cs" />
-    <Compile Include="Class\Updater.cs" />
+    <Compile Include="Class\Smite.cs" />
     <Compile Include="Feature\AutoLeveler.cs" />
     <Compile Include="Feature\AutoPotion.cs" />
+    <Compile Include="Feature\AutoSmite.cs" />
+    <Compile Include="Feature\Health.cs" />
     <Compile Include="Feature\Humanizer.cs" />
+    <Compile Include="Feature\Trackers\BlinkTracker.cs" />
+    <Compile Include="Feature\Trackers\CloneTracker.cs" />
+    <Compile Include="Feature\Trackers\CooldownTracker.cs" />
+    <Compile Include="Feature\Trackers\ObjectTracker.cs" />
+    <Compile Include="Feature\Trackers\RecallTracker.cs" />
+    <Compile Include="Feature\Timers\ImmuneTimer.cs" />
+    <Compile Include="Feature\Timers\JungleTimer.cs" />
     <Compile Include="Feature\LasthitMarker.cs" />
+    <Compile Include="Feature\Timers\ObjectTimer.cs" />
     <Compile Include="Feature\Ranges.cs" />
+    <Compile Include="Feature\Timers\Timers.cs" />
+    <Compile Include="Feature\Trackers\Trackers.cs" />
+    <Compile Include="Feature\Trackers\WardTracker.cs" />
+    <Compile Include="Feature\Trackers\WaypointTracker.cs" />
+    <Compile Include="Feature\Trinkets.cs" />
     <Compile Include="IoCContainer\Container.cs" />
     <Compile Include="IoCContainer\IContainer.cs" />
     <Compile Include="IoCContainer\MappingKey.cs" />
@@ -77,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="SFXUtility.licenseheader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

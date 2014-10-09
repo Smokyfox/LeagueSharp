@@ -1,4 +1,26 @@
-﻿namespace SFXUtility.Class
+﻿#region License
+
+/*
+ Copyright 2014 - 2014 Nikita Bernthaler
+ Item.cs is part of SFXUtility.
+ 
+ SFXUtility is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ SFXUtility is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with SFXUtility. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#endregion
+
+namespace SFXUtility.Class
 {
     public class Item
     {
@@ -15,11 +37,9 @@
             QuicksilverSash = 3140,
             FrostQueensClaim = 3092,
             RanduinsOmen = 3143,
-            SeraphsEmbrace = 3040,
-            SeraphsEmbrace2 = 3048,
+            SeraphsEmbrace = 3048,
             TalismanOfAscension = 3069,
-            TwinShadows = 3023,
-            TwinShadows2 = 3290,
+            TwinShadows = 3290,
             WoogletsWitchcap = 3090,
             ZhonyasHourglass = 3157
         }
@@ -44,8 +64,7 @@
             DeathfireGrasp = 3128,
             Entropy = 3184,
             HextechGunblade = 3146,
-            Muramana = 3042,
-            Muramana2 = 3043,
+            Muramana = 3043,
             OdynsVeil = 3180,
             RavenousHydra = 3074,
             SwordOfTheDivine = 3131,
@@ -62,8 +81,7 @@
             IchorOfRage = 2040,
             ManaPotion = 2004,
             OraclesExtract = 2047,
-            TotalBiscuitOfRejuvenation = 2009,
-            TotalBiscuitOfRejuvenation2 = 2010,
+            TotalBiscuitOfRejuvenation = 2010,
         }
 
         public enum Ward
@@ -72,11 +90,9 @@
             GreaterStealthTotem = 3361,
             GreaterVisionTotem = 3362,
             QuillCoat = 3204,
-            QuillCoat2 = 3205,
             RubySightstone = 2045,
             Sightstone = 2049,
-            SpiritOfTheAncientGolem = 3207,
-            SpiritOfTheAncientGolem2 = 3208,
+            SpiritOfTheAncientGolem = 3208,
             StealthWard = 2044,
             VisionWard = 2043,
             WardingTotem = 3340,

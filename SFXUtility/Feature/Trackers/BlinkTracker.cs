@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- ILogger.cs is part of SFXUtility.
+ BlinkTracker.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,29 +20,9 @@
 
 #endregion
 
-namespace SFXUtility.Logger
+namespace SFXUtility.Feature
 {
-    #region
-
-    using System;
-
-    #endregion
-
-    internal interface ILogger : IDisposable
+    internal class BlinkTracker
     {
-        #region Properties
-
-        string Prefix { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        void Write(string message);
-
-        void WriteBlock(string header, string message);
-        void WriteLine(string message);
-
-        #endregion
     }
 }
