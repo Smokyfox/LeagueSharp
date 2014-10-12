@@ -26,6 +26,7 @@ namespace SFXUtility
 
     using System;
     using Class;
+    using LeagueSharp;
     using LeagueSharp.Common;
 
     #endregion
@@ -36,28 +37,36 @@ namespace SFXUtility
 
         public SFXUtility()
         {
-            Menu = new Menu(Name, Name, true);
-
-            var miscMenu = new Menu("Misc", "Misc");
-
-            var infoMenu = new Menu("Info", "Info");
-            infoMenu.AddItem(new MenuItem("InfoVersion", string.Format("Version: {0}", Version)));
-            infoMenu.AddItem(new MenuItem("InfoIRC", "IRC: Appril"));
-            infoMenu.AddItem(new MenuItem("InfoGithub", "Github:").SetValue(new StringList(new[]
+            try
             {
-                "Smokyfox",
-                "Lizzaran"
-            })));
+                Menu = new Menu(Name, Name, true);
 
-            miscMenu.AddSubMenu(infoMenu);
+                var miscMenu = new Menu("Misc", "Misc");
 
-            miscMenu.AddItem(new MenuItem("MiscCircleThickness", "Circles Thickness").SetValue(new Slider(3, 10, 1)));
+                var infoMenu = new Menu("Info", "Info");
+                infoMenu.AddItem(new MenuItem("InfoVersion", string.Format("Version: {0}", Version)));
+                infoMenu.AddItem(new MenuItem("InfoIRC", "IRC: Appril"));
+                infoMenu.AddItem(new MenuItem("InfoGithub", "Github:").SetValue(new StringList(new[]
+                {
+                    "Smokyfox",
+                    "Lizzaran"
+                })));
 
-            Menu.AddSubMenu(miscMenu);
-            AppDomain.CurrentDomain.DomainUnload += OnExit;
-            AppDomain.CurrentDomain.ProcessExit += OnExit;
-            CustomEvents.Game.OnGameEnd += OnGameEnd;
-            CustomEvents.Game.OnGameLoad += OnGameLoad;
+                miscMenu.AddSubMenu(infoMenu);
+
+                miscMenu.AddItem(new MenuItem("MiscCircleThickness", "Circles Thickness").SetValue(new Slider(3, 10, 1)));
+
+                Menu.AddSubMenu(miscMenu);
+                AppDomain.CurrentDomain.DomainUnload += OnExit;
+                AppDomain.CurrentDomain.ProcessExit += OnExit;
+                CustomEvents.Game.OnGameEnd += OnGameEnd;
+                Game.OnGameEnd += OnGameEnd;
+                CustomEvents.Game.OnGameLoad += OnGameLoad;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         #endregion
@@ -79,7 +88,7 @@ namespace SFXUtility
 
         public Version Version
         {
-            get { return new Version(0, 6, 0); }
+            get { return new Version(0, 7, 0); }
         }
 
         #endregion
@@ -88,19 +97,40 @@ namespace SFXUtility
 
         private void OnExit(object sender, EventArgs e)
         {
-            EventHandler handler = OnUnload;
-            if (null != handler) handler(this, EventArgs.Empty);
+            try
+            {
+                EventHandler handler = OnUnload;
+                if (null != handler) handler(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private void OnGameEnd(EventArgs args)
         {
-            OnExit(null, null);
+            try
+            {
+                OnExit(null, null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private void OnGameLoad(EventArgs args)
         {
-            Chat.Print(string.Format("{0} v{1}.{2}.{3} loaded.", Name, Version.Major, Version.Minor, Version.Build));
-            Menu.AddToMainMenu();
+            try
+            {
+                Chat.Print(string.Format("{0} v{1}.{2}.{3} loaded.", Name, Version.Major, Version.Minor, Version.Build));
+                Menu.AddToMainMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         #endregion

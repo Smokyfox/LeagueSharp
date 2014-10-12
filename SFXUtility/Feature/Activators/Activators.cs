@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- BaseExt.cs is part of SFXUtility.
+ Activators.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,21 +20,22 @@
 
 #endregion
 
-namespace SFXUtility.Class
+namespace SFXUtility.Feature
 {
     #region
 
     using System;
+    using Class;
     using IoCContainer;
     using LeagueSharp.Common;
 
     #endregion
 
-    internal abstract class BaseExt : Base
+    internal class Activators : Base
     {
         #region Constructors
 
-        protected BaseExt(IContainer container)
+        public Activators(IContainer container)
             : base(container)
         {
             CustomEvents.Game.OnGameLoad += OnGameLoad;
@@ -46,11 +47,12 @@ namespace SFXUtility.Class
 
         public override bool Enabled
         {
-            get
-            {
-                return Menu != null && Menu.Item("Enabled").GetValue<bool>();
-                ;
-            }
+            get { return Menu != null && Menu.Item(Name + "Enabled").GetValue<bool>(); }
+        }
+
+        public override string Name
+        {
+            get { return "Activators"; }
         }
 
         #endregion
@@ -59,16 +61,19 @@ namespace SFXUtility.Class
 
         private void OnGameLoad(EventArgs args)
         {
-            Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
+                Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
+
                 Menu = new Menu(Name, Name);
                 if (IoC.IsRegistered<Mediator>())
                 {
-                    IoC.Resolve<Mediator>().NotifyColleagues(Name + "_loaded", this);
+                    IoC.Resolve<Mediator>().NotifyColleagues(Name + "_initialized", this);
                 }
-                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(true));
                 BaseMenu.AddSubMenu(Menu);
+
+                Initialized = true;
             }
             catch (Exception ex)
             {

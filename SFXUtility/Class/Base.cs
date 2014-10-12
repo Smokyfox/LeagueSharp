@@ -49,7 +49,6 @@ namespace SFXUtility.Class
             Logger = IoC.Resolve<ILogger>();
             BaseMenu = sfx.Menu;
             BaseName = sfx.Name;
-            sfx.OnUnload += OnUnload;
         }
 
         #endregion
@@ -58,6 +57,7 @@ namespace SFXUtility.Class
 
         public abstract bool Enabled { get; }
         public abstract string Name { get; }
+        public bool Initialized { get; protected set; }
 
         public Menu Menu { get; set; }
 
@@ -67,15 +67,6 @@ namespace SFXUtility.Class
         protected IContainer IoC { get; private set; }
 
         protected ILogger Logger { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        protected virtual void OnUnload(object sender, EventArgs args)
-        {
-            IoC.Deregister(GetType());
-        }
 
         #endregion
     }

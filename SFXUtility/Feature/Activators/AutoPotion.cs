@@ -38,6 +38,8 @@ namespace SFXUtility.Feature
     {
         #region Fields
 
+        private Activators _activators;
+
         private List<Potion> _potions = new List<Potion>
         {
             new Potion
@@ -99,7 +101,12 @@ namespace SFXUtility.Feature
 
         public override bool Enabled
         {
-            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
+            get
+            {
+                return _activators != null && _activators.Menu != null &&
+                       _activators.Menu.Item(_activators.Name + "Enabled").GetValue<bool>() && Menu != null &&
+                       Menu.Item(Name + "Enabled").GetValue<bool>();
+            }
         }
 
         public override string Name
@@ -110,6 +117,45 @@ namespace SFXUtility.Feature
         #endregion
 
         #region Methods
+
+        private void ActivatorsLoaded(object o)
+        {
+            try
+            {
+                if (o is Activators && (o as Activators).Menu != null)
+                {
+                    _activators = (o as Activators);
+
+                    _potions = _potions.OrderBy(x => x.Priority).ToList();
+
+                    Menu = new Menu(Name, Name);
+
+                    var healthMenu = new Menu("Health", Name + "Health");
+                    healthMenu.AddItem(new MenuItem(Name + "HealthPotion", "Use Health Potion").SetValue(true));
+                    healthMenu.AddItem(
+                        new MenuItem(Name + "HealthPercent", "HP Trigger Percent").SetValue(new Slider(60)));
+
+                    var manaMenu = new Menu("Mana", Name + "Mana");
+                    manaMenu.AddItem(new MenuItem(Name + "ManaPotion", "Use Mana Potion").SetValue(true));
+                    manaMenu.AddItem(new MenuItem(Name + "ManaPercent", "MP Trigger Percent").SetValue(new Slider(60)));
+
+                    Menu.AddSubMenu(healthMenu);
+                    Menu.AddSubMenu(manaMenu);
+
+                    Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(false));
+
+                    _activators.Menu.AddSubMenu(Menu);
+
+                    Game.OnGameUpdate += OnGameUpdate;
+
+                    Initialized = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteBlock(ex.Message, ex.ToString());
+            }
+        }
 
         private InventorySlot GetPotionSlot(PotionType type)
         {
@@ -129,29 +175,21 @@ namespace SFXUtility.Feature
 
         private void OnGameLoad(EventArgs args)
         {
-            Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
-                _potions = _potions.OrderBy(x => x.Priority).ToList();
+                Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
 
-                Menu = new Menu(Name, Name);
-
-                var healthMenu = new Menu("Health", "Health");
-                healthMenu.AddItem(new MenuItem("HealthPotion", "Use Health Potion").SetValue(true));
-                healthMenu.AddItem(new MenuItem("HealthPercent", "HP Trigger Percent").SetValue(new Slider(60)));
-
-                var manaMenu = new Menu("Mana", "Mana");
-                manaMenu.AddItem(new MenuItem("ManaPotion", "Use Mana Potion").SetValue(true));
-                manaMenu.AddItem(new MenuItem("ManaPercent", "MP Trigger Percent").SetValue(new Slider(60)));
-
-                Menu.AddSubMenu(healthMenu);
-                Menu.AddSubMenu(manaMenu);
-
-                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(false));
-
-                BaseMenu.AddSubMenu(Menu);
-
-                Game.OnGameUpdate += OnGameUpdate;
+                if (IoC.IsRegistered<Activators>() && IoC.Resolve<Activators>().Initialized)
+                {
+                    ActivatorsLoaded(IoC.Resolve<Activators>());
+                }
+                else
+                {
+                    if (IoC.IsRegistered<Mediator>())
+                    {
+                        IoC.Resolve<Mediator>().Register("Activators_initialized", ActivatorsLoaded);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -161,13 +199,15 @@ namespace SFXUtility.Feature
 
         private void OnGameUpdate(EventArgs args)
         {
-            if (!Enabled)
-                return;
             try
             {
-                if (Menu.Item("HealthPotion").GetValue<bool>())
+                if (!Enabled)
+                    return;
+
+                if (Menu.Item(Name + "HealthPotion").GetValue<bool>())
                 {
-                    if (ObjectManager.Player.HealthPercentage() <= Menu.Item("HealthPercent").GetValue<Slider>().Value)
+                    if (ObjectManager.Player.HealthPercentage() <=
+                        Menu.Item(Name + "HealthPercent").GetValue<Slider>().Value)
                     {
                         InventorySlot healthSlot = GetPotionSlot(PotionType.Health);
                         if (healthSlot != null && !IsBuffActive(PotionType.Health))
@@ -175,9 +215,10 @@ namespace SFXUtility.Feature
                     }
                 }
 
-                if (Menu.Item("ManaPotion").GetValue<bool>())
+                if (Menu.Item(Name + "ManaPotion").GetValue<bool>())
                 {
-                    if (ObjectManager.Player.ManaPercentage() <= Menu.Item("ManaPercent").GetValue<Slider>().Value)
+                    if (ObjectManager.Player.ManaPercentage() <=
+                        Menu.Item(Name + "ManaPercent").GetValue<Slider>().Value)
                     {
                         InventorySlot manaSlot = GetPotionSlot(PotionType.Mana);
                         if (manaSlot != null && !IsBuffActive(PotionType.Mana))

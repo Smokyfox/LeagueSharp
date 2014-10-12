@@ -24,26 +24,63 @@ namespace SFXUtility.Feature
 {
     #region
 
+    using System;
     using Class;
     using IoCContainer;
+    using LeagueSharp.Common;
 
     #endregion
 
-    internal class Timers : BaseExt
+    internal class Timers : Base
     {
         #region Constructors
 
         public Timers(IContainer container) : base(container)
         {
+            CustomEvents.Game.OnGameLoad += OnGameLoad;
         }
 
         #endregion
 
         #region Properties
 
+        public override bool Enabled
+        {
+            get { return Menu != null && Menu.Item(Name + "Enabled").GetValue<bool>(); }
+        }
+
         public override string Name
         {
             get { return "Timers"; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void OnGameLoad(EventArgs args)
+        {
+            try
+            {
+                Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
+
+                Menu = new Menu(Name, Name);
+
+                Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(true));
+
+                BaseMenu.AddSubMenu(Menu);
+
+                if (IoC.IsRegistered<Mediator>())
+                {
+                    IoC.Resolve<Mediator>().NotifyColleagues(Name + "_initialized", this);
+                }
+
+                Initialized = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteBlock(ex.Message, ex.ToString());
+            }
         }
 
         #endregion

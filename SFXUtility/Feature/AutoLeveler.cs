@@ -49,7 +49,7 @@ namespace SFXUtility.Feature
 
         public override bool Enabled
         {
-            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
+            get { return Menu != null && Menu.Item(Name + "Enabled").GetValue<bool>(); }
         }
 
         public override string Name
@@ -68,17 +68,17 @@ namespace SFXUtility.Feature
                 new MenuInfo
                 {
                     Slot = SpellSlot.Q,
-                    Value = Menu.Item("PatternQ").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternQ").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.W,
-                    Value = Menu.Item("PatternW").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternW").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.E,
-                    Value = Menu.Item("PatternE").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternE").GetValue<Slider>().Value
                 }
             }.OrderBy(x => x.Value).Reverse().First(s => s.Value == priority);
         }
@@ -90,49 +90,51 @@ namespace SFXUtility.Feature
                 new MenuInfo
                 {
                     Slot = SpellSlot.Q,
-                    Value = Menu.Item("PatternQ").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternQ").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.W,
-                    Value = Menu.Item("PatternW").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternW").GetValue<Slider>().Value
                 },
                 new MenuInfo
                 {
                     Slot = SpellSlot.E,
-                    Value = Menu.Item("PatternE").GetValue<Slider>().Value
+                    Value = Menu.Item(Name + "PatternE").GetValue<Slider>().Value
                 }
             }.OrderBy(x => x.Value).Reverse().ToList();
         }
 
         private void OnGameLoad(EventArgs args)
         {
-            Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
+                Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
+
                 Menu = new Menu(Name, Name);
 
-
-                var patternMenu = new Menu("Pattern", "Pattern");
-                patternMenu.AddItem(new MenuItem("PatternEarly", "Early Pattern").SetValue(new StringList(new[]
+                var patternMenu = new Menu("Pattern", Name + "Pattern");
+                patternMenu.AddItem(new MenuItem(Name + "PatternEarly", "Early Pattern").SetValue(new StringList(new[]
                 {
                     "x 2 3 1",
                     "x 2 1",
                     "x 1 3",
                     "x 1 2"
                 })));
-                patternMenu.AddItem(new MenuItem("PatternQ", "Q").SetValue(new Slider(3, 3, 1)));
-                patternMenu.AddItem(new MenuItem("PatternW", "W").SetValue(new Slider(1, 3, 1)));
-                patternMenu.AddItem(new MenuItem("PatternE", "E").SetValue(new Slider(2, 3, 1)));
+                patternMenu.AddItem(new MenuItem(Name + "PatternQ", "Q").SetValue(new Slider(3, 3, 1)));
+                patternMenu.AddItem(new MenuItem(Name + "PatternW", "W").SetValue(new Slider(1, 3, 1)));
+                patternMenu.AddItem(new MenuItem(Name + "PatternE", "E").SetValue(new Slider(2, 3, 1)));
 
                 Menu.AddSubMenu(patternMenu);
 
-                Menu.AddItem(new MenuItem("OnlyR", "Only R").SetValue(false));
-                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(false));
+                Menu.AddItem(new MenuItem(Name + "OnlyR", "Only R").SetValue(false));
+                Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(false));
 
                 BaseMenu.AddSubMenu(Menu);
 
                 CustomEvents.Unit.OnLevelUp += OnLevelUp;
+
+                Initialized = true;
             }
             catch (Exception ex)
             {
@@ -142,10 +144,11 @@ namespace SFXUtility.Feature
 
         private void OnLevelUp(Obj_AI_Base sender, CustomEvents.Unit.OnLevelUpEventArgs args)
         {
-            if (!Enabled)
-                return;
             try
             {
+                if (!Enabled)
+                    return;
+
                 if (!sender.IsValid || !sender.IsMe)
                     return;
 
@@ -161,10 +164,10 @@ namespace SFXUtility.Feature
 
                 ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.R);
 
-                if (Menu.Item("OnlyR").GetValue<bool>())
+                if (Menu.Item(Name + "OnlyR").GetValue<bool>())
                     return;
 
-                var patternIndex = Menu.Item("PatternEarly").GetValue<StringList>().SelectedIndex;
+                var patternIndex = Menu.Item(Name + "PatternEarly").GetValue<StringList>().SelectedIndex;
                 MenuInfo mf = null;
                 switch (args.NewLevel)
                 {

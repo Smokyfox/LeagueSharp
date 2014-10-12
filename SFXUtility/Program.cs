@@ -39,30 +39,30 @@ namespace SFXUtility
 
         private static void Main(string[] args)
         {
-            try
+            var container = new Container();
+            container.Register<ILogger, ConsoleLogger>();
+            container.Register<Mediator, Mediator>(true);
+
+            container.Register<SFXUtility, SFXUtility>(true, true);
+
+            var bType = typeof (Base);
+            foreach (
+                var type in
+                    Assembly.GetAssembly(bType)
+                        .GetTypes()
+                        .OrderBy(type => type.Name)
+                        .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(bType)))
             {
-                var container = new Container();
-                container.Register<ILogger, ConsoleLogger>();
-                container.Register<Mediator, Mediator>(true);
-
-                container.Register<SFXUtility, SFXUtility>(true, true);
-
-                var bType = typeof (Base);
-                foreach (
-                    var type in
-                        Assembly.GetAssembly(bType)
-                            .GetTypes()
-                            .OrderBy(type => type.Name)
-                            .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(bType)))
+                try
                 {
                     var tmpType = type;
                     container.Register(type, () => Activator.CreateInstance(tmpType, new object[] {container}), true,
                         true);
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
         }
 

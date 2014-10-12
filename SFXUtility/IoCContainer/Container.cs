@@ -142,6 +142,7 @@ namespace SFXUtility.IoCContainer
             if (_mappings.TryGetValue(key, out obj))
             {
                 var mk = _mappings.FirstOrDefault(x => x.Value == obj).Key;
+
                 if (mk.Singleton)
                 {
                     return mk.Instance ?? (mk.Instance = obj());

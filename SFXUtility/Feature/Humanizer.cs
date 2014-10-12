@@ -55,7 +55,7 @@ namespace SFXUtility.Feature
 
         public override bool Enabled
         {
-            get { return Menu != null && Menu.Item("Enabled").GetValue<bool>(); }
+            get { return Menu != null && Menu.Item(Name + "Enabled").GetValue<bool>(); }
         }
 
         public override string Name
@@ -69,22 +69,25 @@ namespace SFXUtility.Feature
 
         private void OnGameLoad(EventArgs args)
         {
-            Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
             try
             {
+                Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
+
                 Menu = new Menu(Name, Name);
 
-                var delayMenu = new Menu("Delay", "Delay");
-                delayMenu.AddItem(new MenuItem("DelaySpells", "Spells (ms)").SetValue(new Slider(50, 0, 250)));
-                delayMenu.AddItem(new MenuItem("DelayMovement", "Movement (ms)").SetValue(new Slider(50, 0, 250)));
+                var delayMenu = new Menu("Delay", Name + "Delay");
+                delayMenu.AddItem(new MenuItem(Name + "DelaySpells", "Spells (ms)").SetValue(new Slider(50, 0, 250)));
+                delayMenu.AddItem(new MenuItem(Name + "DelayMovement", "Movement (ms)").SetValue(new Slider(50, 0, 250)));
 
                 Menu.AddSubMenu(delayMenu);
 
-                Menu.AddItem(new MenuItem("Enabled", "Enabled").SetValue(true));
+                Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(true));
 
                 BaseMenu.AddSubMenu(Menu);
 
                 Game.OnGameSendPacket += OnGameSendPacket;
+
+                Initialized = true;
             }
             catch (Exception ex)
             {
@@ -94,13 +97,13 @@ namespace SFXUtility.Feature
 
         private void OnGameSendPacket(GamePacketEventArgs args)
         {
-            if (!Enabled)
-                return;
-
             try
             {
-                var spellsDelay = Menu.Item("DelaySpells").GetValue<Slider>().Value;
-                var movementDelay = Menu.Item("DelayMovement").GetValue<Slider>().Value;
+                if (!Enabled)
+                    return;
+
+                var spellsDelay = Menu.Item(Name + "DelaySpells").GetValue<Slider>().Value;
+                var movementDelay = Menu.Item(Name + "DelayMovement").GetValue<Slider>().Value;
 
                 if (spellsDelay > 0 && (new GamePacket(args.PacketData)).Header == Packet.C2S.Cast.Header)
                 {

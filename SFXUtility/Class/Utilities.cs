@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- Utilities.cs is part of SFXUtility.
+ utilities.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -46,6 +46,12 @@ namespace SFXUtility.Class
             {
                 menu.AddItem(menuItem);
             }
+        }
+
+        public static void DrawCross(Vector2 pos, float size, float thickness, Color color)
+        {
+            Drawing.DrawLine(pos.X - size, pos.Y - size, pos.X + size, pos.Y + size, thickness, color);
+            Drawing.DrawLine(pos.X + size, pos.Y - size, pos.X - size, pos.Y + size, thickness, color);
         }
 
         public static void DrawTextCentered(Vector2 pos, Color color, string content)
