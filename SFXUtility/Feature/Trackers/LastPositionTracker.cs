@@ -161,11 +161,31 @@ namespace SFXUtility.Feature
                         (Bitmap) Resources.ResourceManager.GetObject(string.Format("LP_{0}", hero.ChampionName)),
                         new Vector2(mPos.X, mPos.Y))
                     {
-                        VisibleCondition = delegate { return Active && !_hero.IsVisible && !_hero.IsDead; },
+                        VisibleCondition = delegate
+                        {
+                            try 
+                            { 
+                                
+                                return Active && !_hero.IsVisible && !_hero.IsDead;
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return false;
+                            }
+                        },
                         PositionUpdate = delegate
                         {
+                            try
+                            { 
                             var pos = Drawing.WorldToMinimap(hero.Position);
                             return new Vector2(pos.X - (_sprite.Size.X/2), pos.Y - (_sprite.Size.Y/2));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return new Vector2();
+                            }
                         }
                     };
             }

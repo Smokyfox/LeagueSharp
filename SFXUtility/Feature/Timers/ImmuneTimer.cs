@@ -41,6 +41,7 @@ namespace SFXUtility.Feature
     {
         #region Fields
 
+        private readonly string[] _immuneBuffs = {"zhonyasringshield", "woogletswitchcap"};
         private readonly List<ImmuneHero> _immuneHero = new List<ImmuneHero>();
         private readonly List<ImmuneStruct> _immuneStructs = new List<ImmuneStruct>();
         private Timers _timers;
@@ -82,7 +83,7 @@ namespace SFXUtility.Feature
         {
             try
             {
-                if (!Enabled || !sender.IsValid)
+                if (!Enabled)
                     return;
 
                 foreach (Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>())
@@ -90,13 +91,12 @@ namespace SFXUtility.Feature
                     if (hero.IsValid && (hero.IsAlly && Menu.Item(Name + "ShowAlly").GetValue<bool>() ||
                                          hero.IsEnemy && Menu.Item(Name + "ShowEnemy").GetValue<bool>()))
                     {
-                        foreach (ImmuneStruct iStruct in _immuneStructs)
+                        foreach (
+                            ImmuneStruct iStruct in _immuneStructs.Where(iStruct => iStruct.SpellName == sender.Name &&
+                                                                                    Vector3.Distance(sender.Position,
+                                                                                        hero.Position) <= 100))
                         {
-                            if (iStruct.SpellName == sender.Name &&
-                                Vector3.Distance(sender.Position, hero.Position) <= 100)
-                            {
-                                _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
-                            }
+                            _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
                         }
                     }
                 }
@@ -116,12 +116,19 @@ namespace SFXUtility.Feature
 
                 foreach (ImmuneHero iHero in _immuneHero.ToList().Where(iHero => iHero.TimeUsed != -1))
                 {
-                    float endTime = iHero.TimeUsed - (int) Game.Time + iHero.Struct.Delay;
-                    var m = (float) Math.Floor(endTime/60);
-                    var s = (float) Math.Ceiling(endTime%60);
-                    Utilities.DrawTextCentered(iHero.Hero.Position.To2D(),
+                    Utilities.DrawTextCentered(Drawing.WorldToScreen(iHero.Hero.Position),
                         Menu.Item(Name + "Drawing" + (iHero.Hero.IsAlly ? "Ally" : "Enemy") + "Color").GetValue<Color>(),
-                        (s < 10 ? m + ":0" + s : m + ":" + s));
+                        (iHero.TimeUsed - Game.Time + iHero.Struct.Delay).ToString("0.00"));
+                }
+
+                foreach (var hero in ObjectManager.Get<Obj_AI_Hero>())
+                {
+                    foreach (var buff in hero.Buffs.Where(buff => _immuneBuffs.Contains(buff.Name)))
+                    {
+                        Utilities.DrawTextCentered(new Vector2(hero.HPBarPosition.X + 75, hero.HPBarPosition.Y + 34),
+                            Menu.Item(Name + "Drawing" + (hero.IsAlly ? "Ally" : "Enemy") + "Color").GetValue<Color>(),
+                            (buff.EndTime - Game.Time).ToString("0.00"));
+                    }
                 }
             }
             catch (Exception ex)
@@ -161,7 +168,7 @@ namespace SFXUtility.Feature
                 if (!Enabled)
                     return;
 
-                _immuneHero.RemoveAll(iHero => iHero.TimeUsed + iHero.Struct.Delay < Game.Time);
+                _immuneHero.RemoveAll(iHero => (iHero.TimeUsed + iHero.Struct.Delay) < Game.Time);
             }
             catch (Exception ex)
             {
@@ -194,6 +201,7 @@ namespace SFXUtility.Feature
                     _immuneStructs.Add(new ImmuneStruct("eyeforaneye_self.troy", 2f));
                     _immuneStructs.Add(new ImmuneStruct("zhonyas_ring_activate.troy", 2.5f));
                     _immuneStructs.Add(new ImmuneStruct("Aatrox_Passive_Death_Activate.troy", 3f));
+                    _immuneStructs.Add(new ImmuneStruct("Aatrox_Skin01_Passive_Death_Activate.troy", 3f));
                     _immuneStructs.Add(new ImmuneStruct("LifeAura.troy", 4f));
                     _immuneStructs.Add(new ImmuneStruct("UndyingRage_buf.troy", 5f));
                     _immuneStructs.Add(new ImmuneStruct("EggTimer.troy", 6f));
