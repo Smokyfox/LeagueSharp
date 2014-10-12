@@ -32,6 +32,7 @@ Draws various ranges. Turrets, Experience, Spells, AutoAttack.
 Trackers
 -----------
 Clone, Waypoint, Last Position
+
 Not implementet yet: Blink (Flash etc.), Cooldown, Objects (Shrooms, Traps etc.), Recall, Wards
 
 Trinkets
@@ -41,7 +42,8 @@ Automatically buy / switch trinkes based on timers & events.
 Timers
 -----------
 Immune
-Not implementet yet: Immune, Jungle, Objects (Altar, Health, Inhibitor)
+
+Not implementet yet: Jungle, Objects (Altar, Health, Inhibitor)
 
 
 License
