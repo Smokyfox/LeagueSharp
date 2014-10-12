@@ -127,10 +127,10 @@ namespace SFXUtility.Feature
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingUseableColor", "Useable Color").SetValue(Color.Blue));
                     drawingMenu.AddItem(
                         new MenuItem(Name + "DrawingUnusableColor", "Unusable Color").SetValue(Color.Gray));
-                    drawingMenu.AddItem(new MenuItem(Name + "DrawingHealthColor", "Health Color").SetValue(Color.Tomato));
+                    drawingMenu.AddItem(new MenuItem(Name + "DrawingDamageColor", "Damage Color").SetValue(Color.Tomato));
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingSmiteRange", "Smite Range").SetValue(true));
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingHeroSpellsRange", "Hero Spells Range").SetValue(true));
-                    drawingMenu.AddItem(new MenuItem(Name + "DrawingHealthTillSmite", "Health till Smite").SetValue(true));
+                    drawingMenu.AddItem(new MenuItem(Name + "DrawingDamageTillSmite", "Damage till Smite").SetValue(true));
 
                     Menu.AddSubMenu(spellsMenu);
                     Menu.AddSubMenu(drawingMenu);
@@ -218,11 +218,11 @@ namespace SFXUtility.Feature
                             : Menu.Item(Name + "DrawingUnusableColor").GetValue<Color>(), circleThickness);
                 }
                 if (_currentMinion != null && _currentMinion.IsVisible && !_currentMinion.IsDead &&
-                    Menu.Item(Name + "DrawingHealthTillSmite").GetValue<bool>())
+                    Menu.Item(Name + "DrawingDamageTillSmite").GetValue<bool>())
                 {
-                    Utilities.DrawTextCentered(_currentMinion.Position.To2D(),
-                        Menu.Item(Name + "DrawingHealthColor").GetValue<Color>(),
-                        ((int) (700.01 - 800.01)).ToString(CultureInfo.InvariantCulture));
+                    Utilities.DrawTextCentered(Drawing.WorldToScreen(_currentMinion.Position),
+                        Menu.Item(Name + "DrawingDamageColor").GetValue<Color>(),
+                        ((int)(_currentMinion.Health - _smite.CalculateDamage())).ToString(CultureInfo.InvariantCulture));
                 }
             }
             catch (Exception ex)
