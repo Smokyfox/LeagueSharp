@@ -227,7 +227,7 @@ namespace SFXUtility.Feature
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Logger.WriteBlock(ex.Message, ex.ToString());
             }
         }
 
@@ -297,7 +297,7 @@ namespace SFXUtility.Feature
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Logger.WriteBlock(ex.Message, ex.ToString());
             }
         }
 
