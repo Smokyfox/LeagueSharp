@@ -57,7 +57,7 @@ namespace SFXUtility.Class
         public static void DrawTextCentered(Vector2 pos, Color color, string content)
         {
             var rec = Drawing.GetTextExtent(content);
-            Drawing.DrawText(pos.X - rec.Width/2, pos.Y - rec.Height/2, color, content);
+            Drawing.DrawText(pos.X - rec.Width/2f, pos.Y - rec.Height/2f, color, content);
         }
 
         public static Obj_AI_Minion GetNearestMinionByNames(Vector3 pos, string[] names)
@@ -142,11 +142,6 @@ namespace SFXUtility.Class
 
         public static bool IsOnScreen(Vector2 start, Vector2 end)
         {
-            var topLeft = new Vector2(0, 0);
-            var topRight = new Vector2(0, Drawing.Width);
-            var bottomLeft = new Vector2(Drawing.Height, 0);
-            var bottomRight = new Vector2(Drawing.Height, Drawing.Width);
-
             if (start.X > 0 && start.X < Drawing.Width && start.Y > 0 && start.Y < Drawing.Height && end.X > 0 &&
                 end.X < Drawing.Width && end.Y > 0 && end.Y < Drawing.Height)
             {
@@ -155,10 +150,10 @@ namespace SFXUtility.Class
 
             return new List<Geometry.IntersectionResult>
             {
-                topLeft.Intersection(topRight, start, end),
-                topRight.Intersection(bottomRight, start, end),
-                bottomRight.Intersection(bottomLeft, start, end),
-                bottomLeft.Intersection(topLeft, start, end)
+                new Vector2(0, 0).Intersection(new Vector2(0, Drawing.Width), start, end),
+                new Vector2(0, Drawing.Width).Intersection(new Vector2(Drawing.Height, Drawing.Width), start, end),
+                new Vector2(Drawing.Height, Drawing.Width).Intersection(new Vector2(Drawing.Height, 0), start, end),
+                new Vector2(Drawing.Height, 0).Intersection(new Vector2(0, 0), start, end)
             }.Any(intersection => intersection.Intersects);
         }
 

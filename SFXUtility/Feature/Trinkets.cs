@@ -38,7 +38,7 @@ namespace SFXUtility.Feature
     {
         #region Fields
 
-        private const float CheckInterval = 500;
+        private const float CheckInterval = 125f;
         private float _lastCheck = Environment.TickCount;
 
         #endregion

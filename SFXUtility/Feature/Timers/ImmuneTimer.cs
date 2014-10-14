@@ -33,13 +33,16 @@ namespace SFXUtility.Feature
     using LeagueSharp.Common;
     using SharpDX;
     using Color = System.Drawing.Color;
-    using Utilities = global::SFXUtility.Class.Utilities;
+    using Utilities = Class.Utilities;
 
     #endregion
 
     internal class ImmuneTimer : Base
     {
         #region Fields
+
+        private const float CheckInterval = 25f;
+        private float _lastCheck = Environment.TickCount;
 
         private readonly string[] _immuneBuffs =
         {
@@ -95,35 +98,6 @@ namespace SFXUtility.Feature
         #endregion
 
         #region Methods
-
-        private void ObjectOnCreate(GameObject sender, EventArgs args)
-        {
-            try
-            {
-                if (!Enabled || !sender.IsValid)
-                    return;
-
-                foreach (Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>())
-                {
-                    if (hero.IsValid && (hero.IsAlly && Menu.Item(Name + "ShowAlly").GetValue<bool>() ||
-                                         hero.IsEnemy && Menu.Item(Name + "ShowEnemy").GetValue<bool>()))
-                    {
-                        foreach (ImmuneStruct iStruct in _immuneStructs)
-                        {
-                            if (iStruct.SpellName == sender.Name &&
-                                Vector3.Distance(sender.Position, hero.Position) <= 100)
-                            {
-                                _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteBlock(ex.Message, ex.ToString());
-            }
-        }
 
         private void OnDraw(EventArgs args)
         {
@@ -194,10 +168,40 @@ namespace SFXUtility.Feature
         {
             try
             {
-                if (!Enabled)
+                if (!Enabled || _lastCheck + CheckInterval > Environment.TickCount)
                     return;
 
+                _lastCheck = Environment.TickCount;
                 _immuneHero.RemoveAll(iHero => (iHero.TimeUsed + iHero.Struct.Delay) < Game.Time);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteBlock(ex.Message, ex.ToString());
+            }
+        }
+
+        private void OnObjectCreate(GameObject sender, EventArgs args)
+        {
+            try
+            {
+                if (!Enabled || !sender.IsValid)
+                    return;
+
+                foreach (Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>())
+                {
+                    if (hero.IsValid && (hero.IsAlly && Menu.Item(Name + "ShowAlly").GetValue<bool>() ||
+                                         hero.IsEnemy && Menu.Item(Name + "ShowEnemy").GetValue<bool>()))
+                    {
+                        foreach (ImmuneStruct iStruct in _immuneStructs)
+                        {
+                            if (iStruct.SpellName == sender.Name &&
+                                Vector3.Distance(sender.Position, hero.Position) <= 100)
+                            {
+                                _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -228,7 +232,7 @@ namespace SFXUtility.Feature
                     _timers.Menu.AddSubMenu(Menu);
 
                     Game.OnGameUpdate += OnGameUpdate;
-                    GameObject.OnCreate += ObjectOnCreate;
+                    GameObject.OnCreate += OnObjectCreate;
                     Drawing.OnDraw += OnDraw;
 
                     Initialized = true;

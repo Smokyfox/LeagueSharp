@@ -41,10 +41,7 @@ Automatically buy / switch trinkes based on timers & events.
 
 Timers
 -----------
-Immune
-
-Not implementet yet: Jungle, Objects (Altar, Health, Inhibitor)
-
+Jungle, Object, Immune
 
 License
 -------

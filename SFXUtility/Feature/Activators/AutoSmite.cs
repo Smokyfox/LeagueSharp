@@ -127,7 +127,7 @@ namespace SFXUtility.Feature
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingUseableColor", "Useable Color").SetValue(Color.Blue));
                     drawingMenu.AddItem(
                         new MenuItem(Name + "DrawingUnusableColor", "Unusable Color").SetValue(Color.Gray));
-                    drawingMenu.AddItem(new MenuItem(Name + "DrawingDamageColor", "Damage Color").SetValue(Color.Tomato));
+                    drawingMenu.AddItem(new MenuItem(Name + "DrawingDamageColor", "Damage Color").SetValue(Color.SkyBlue));
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingSmiteRange", "Smite Range").SetValue(true));
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingHeroSpellsRange", "Hero Spells Range").SetValue(true));
                     drawingMenu.AddItem(new MenuItem(Name + "DrawingDamageTillSmite", "Damage till Smite").SetValue(true));

@@ -32,7 +32,7 @@ namespace SFXUtility.Feature
     using LeagueSharp.Common;
     using SharpDX;
     using Color = System.Drawing.Color;
-    using Utilities = global::SFXUtility.Class.Utilities;
+    using Utilities = Class.Utilities;
 
     #endregion
 
