@@ -239,7 +239,7 @@ namespace SFXUtility.Feature
                                 {
                                     for (int j = i + 1; j < l; j++)
                                     {
-                                        if (time >= tsList[j].Time && tsList[j].Buy && tsList[j] != tsList[i])
+                                        if (time >= tsList[j].Time && tsList[j].Buy)
                                             hasHigher = true;
                                     }
                                 }
@@ -271,7 +271,7 @@ namespace SFXUtility.Feature
 
         #region Nested Types
 
-        private class TrinketStruct
+        private struct TrinketStruct
         {
             #region Properties
 

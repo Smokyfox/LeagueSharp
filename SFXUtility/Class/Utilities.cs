@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- utilities.cs is part of SFXUtility.
+ Utilities.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -138,6 +138,28 @@ namespace SFXUtility.Class
             Vector2 screen = Drawing.WorldToScreen(obj.Position);
             return !(screen.X + radius < 0) && !(screen.X - radius > Drawing.Width) && !(screen.Y + radius < 0) &&
                    !(screen.Y - radius > Drawing.Height);
+        }
+
+        public static bool IsOnScreen(Vector2 start, Vector2 end)
+        {
+            var topLeft = new Vector2(0, 0);
+            var topRight = new Vector2(0, Drawing.Width);
+            var bottomLeft = new Vector2(Drawing.Height, 0);
+            var bottomRight = new Vector2(Drawing.Height, Drawing.Width);
+
+            if (start.X > 0 && start.X < Drawing.Width && start.Y > 0 && start.Y < Drawing.Height && end.X > 0 &&
+                end.X < Drawing.Width && end.Y > 0 && end.Y < Drawing.Height)
+            {
+                return true;
+            }
+
+            return new List<Geometry.IntersectionResult>
+            {
+                topLeft.Intersection(topRight, start, end),
+                topRight.Intersection(bottomRight, start, end),
+                bottomRight.Intersection(bottomLeft, start, end),
+                bottomLeft.Intersection(topLeft, start, end)
+            }.Any(intersection => intersection.Intersects);
         }
 
         public static float ManaPercentage(this Obj_AI_Hero hero)

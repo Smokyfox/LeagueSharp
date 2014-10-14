@@ -25,7 +25,6 @@ namespace SFXUtility.Feature
     #region
 
     using System;
-    using System.Globalization;
     using System.Linq;
     using Class;
     using IoCContainer;
@@ -87,7 +86,7 @@ namespace SFXUtility.Feature
                 var lineColor = Menu.Item(Name + "DrawingLineColor").GetValue<Color>();
 
                 foreach (Obj_AI_Hero hero in from hero in ObjectManager.Get<Obj_AI_Hero>()
-                    where hero.IsValid && !hero.IsDead && !hero.IsBot && hero.Path.Length != 0
+                    where hero.IsValid && !hero.IsDead
                     where Menu.Item(Name + "DrawAlly").GetValue<Boolean>() || !hero.IsAlly
                     where Menu.Item(Name + "DrawEnemy").GetValue<Boolean>() || !hero.IsEnemy
                     select hero)
@@ -96,17 +95,23 @@ namespace SFXUtility.Feature
                     var waypoints = hero.GetWaypoints();
                     for (int i = 0, l = waypoints.Count - 1; i < l; i++)
                     {
-                        var current = Drawing.WorldToScreen(waypoints[i].To3D());
-                        var next = Drawing.WorldToScreen(waypoints[i + 1].To3D());
-                        arrivalTime +=
-                            (float) Math.Round(((Vector3.Distance(waypoints[i].To3D(), waypoints[i + 1].To3D())/
-                                                 (ObjectManager.Player.MoveSpeed/1000))/1000), 2);
-                        Drawing.DrawLine(current.X, current.Y, next.X, next.Y, 1, lineColor);
-                        if (i == l - 1)
+                        if (waypoints[i].IsValid() && waypoints[i + 1].IsValid())
                         {
-                            Utilities.DrawCross(next, 10f, 2f, crossColor);
-                            Drawing.DrawText(next.X - 15, next.Y + 10, crossColor,
-                                arrivalTime.ToString(CultureInfo.InvariantCulture));
+                            var current = Drawing.WorldToScreen(waypoints[i].To3D());
+                            var next = Drawing.WorldToScreen(waypoints[i + 1].To3D());
+
+                            if (Utilities.IsOnScreen(current, next))
+                            {
+                                arrivalTime += (Vector3.Distance(waypoints[i].To3D(), waypoints[i + 1].To3D())/
+                                                (ObjectManager.Player.MoveSpeed/1000))/1000;
+                                Drawing.DrawLine(current.X, current.Y, next.X, next.Y, 1, lineColor);
+                                if (i == l - 1 && arrivalTime > 0.1f)
+                                {
+                                    Utilities.DrawCross(next, 10f, 2f, crossColor);
+                                    Utilities.DrawTextCentered(new Vector2(next.X - 5, next.Y + 15), crossColor,
+                                        arrivalTime.ToString("0.0"));
+                                }
+                            }
                         }
                     }
                 }

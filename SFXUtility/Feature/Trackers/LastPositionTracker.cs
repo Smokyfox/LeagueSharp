@@ -41,7 +41,7 @@ namespace SFXUtility.Feature
     {
         #region Fields
 
-        private readonly List<LastPositionStruct> _enemies = new List<LastPositionStruct>();
+        private readonly List<LastPosition> _enemies = new List<LastPosition>();
         private Trackers _trackers;
 
         #endregion
@@ -123,7 +123,7 @@ namespace SFXUtility.Feature
                         Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValid && hero.IsEnemy)
                         )
                     {
-                        _enemies.Add(new LastPositionStruct(hero) {Active = Enabled});
+                        _enemies.Add(new LastPosition(hero) {Active = Enabled});
                     }
 
                     Initialized = true;
@@ -139,7 +139,7 @@ namespace SFXUtility.Feature
 
         #region Nested Types
 
-        private class LastPositionStruct
+        private class LastPosition
         {
             #region Fields
 
@@ -152,7 +152,7 @@ namespace SFXUtility.Feature
 
             #region Constructors
 
-            public LastPositionStruct(Obj_AI_Hero hero)
+            public LastPosition(Obj_AI_Hero hero)
             {
                 _hero = hero;
                 var mPos = Drawing.WorldToMinimap(hero.Position);
@@ -163,9 +163,8 @@ namespace SFXUtility.Feature
                     {
                         VisibleCondition = delegate
                         {
-                            try 
-                            { 
-                                
+                            try
+                            {
                                 return Active && !_hero.IsVisible && !_hero.IsDead;
                             }
                             catch (Exception ex)
@@ -177,14 +176,14 @@ namespace SFXUtility.Feature
                         PositionUpdate = delegate
                         {
                             try
-                            { 
-                            var pos = Drawing.WorldToMinimap(hero.Position);
-                            return new Vector2(pos.X - (_sprite.Size.X/2), pos.Y - (_sprite.Size.Y/2));
+                            {
+                                var pos = Drawing.WorldToMinimap(hero.Position);
+                                return new Vector2(pos.X - (_sprite.Size.X/2), pos.Y - (_sprite.Size.Y/2));
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.ToString());
-                                return new Vector2();
+                                return default(Vector2);
                             }
                         }
                     };

@@ -41,9 +41,26 @@ namespace SFXUtility.Feature
     {
         #region Fields
 
-        private readonly string[] _immuneBuffs = {"zhonyasringshield", "woogletswitchcap"};
+        private readonly string[] _immuneBuffs =
+        {
+            "zhonyasringshield", "woogletswitchcap", "zacrebirthstart",
+            "aatroxpassivedeath", "chronorevive"
+        };
+
         private readonly List<ImmuneHero> _immuneHero = new List<ImmuneHero>();
-        private readonly List<ImmuneStruct> _immuneStructs = new List<ImmuneStruct>();
+
+        private readonly List<ImmuneStruct> _immuneStructs = new List<ImmuneStruct>
+        {
+            new ImmuneStruct("eyeforaneye_self.troy", 2f),
+            new ImmuneStruct("zhonyas_ring_activate.troy", 2.5f),
+            new ImmuneStruct("Aatrox_Passive_Death_Activate.troy", 3f),
+            new ImmuneStruct("Aatrox_Skin01_Passive_Death_Activate.troy", 3f),
+            new ImmuneStruct("LifeAura.troy", 4f),
+            new ImmuneStruct("UndyingRage_buf.troy", 5f),
+            new ImmuneStruct("EggTimer.troy", 6f),
+            new ImmuneStruct("nickoftime_tar.troy", 7f),
+        };
+
         private Timers _timers;
 
         #endregion
@@ -83,7 +100,7 @@ namespace SFXUtility.Feature
         {
             try
             {
-                if (!Enabled)
+                if (!Enabled || !sender.IsValid)
                     return;
 
                 foreach (Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>())
@@ -91,12 +108,13 @@ namespace SFXUtility.Feature
                     if (hero.IsValid && (hero.IsAlly && Menu.Item(Name + "ShowAlly").GetValue<bool>() ||
                                          hero.IsEnemy && Menu.Item(Name + "ShowEnemy").GetValue<bool>()))
                     {
-                        foreach (
-                            ImmuneStruct iStruct in _immuneStructs.Where(iStruct => iStruct.SpellName == sender.Name &&
-                                                                                    Vector3.Distance(sender.Position,
-                                                                                        hero.Position) <= 100))
+                        foreach (ImmuneStruct iStruct in _immuneStructs)
                         {
-                            _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
+                            if (iStruct.SpellName == sender.Name &&
+                                Vector3.Distance(sender.Position, hero.Position) <= 100)
+                            {
+                                _immuneHero.Add(new ImmuneHero((int) Game.Time, hero, iStruct));
+                            }
                         }
                     }
                 }
@@ -118,16 +136,27 @@ namespace SFXUtility.Feature
                 {
                     Utilities.DrawTextCentered(Drawing.WorldToScreen(iHero.Hero.Position),
                         Menu.Item(Name + "Drawing" + (iHero.Hero.IsAlly ? "Ally" : "Enemy") + "Color").GetValue<Color>(),
-                        (iHero.TimeUsed - Game.Time + iHero.Struct.Delay).ToString("0.00"));
+                        (iHero.TimeUsed - Game.Time + iHero.Struct.Delay).ToString("0.0"));
                 }
 
                 foreach (var hero in ObjectManager.Get<Obj_AI_Hero>())
                 {
-                    foreach (var buff in hero.Buffs.Where(buff => _immuneBuffs.Contains(buff.Name)))
+                    if (hero.IsValid && (hero.IsAlly && Menu.Item(Name + "ShowAlly").GetValue<bool>() ||
+                                         hero.IsEnemy && Menu.Item(Name + "ShowEnemy").GetValue<bool>()))
                     {
-                        Utilities.DrawTextCentered(new Vector2(hero.HPBarPosition.X + 75, hero.HPBarPosition.Y + 34),
-                            Menu.Item(Name + "Drawing" + (hero.IsAlly ? "Ally" : "Enemy") + "Color").GetValue<Color>(),
-                            (buff.EndTime - Game.Time).ToString("0.00"));
+                        foreach (
+                            var buff in
+                                hero.Buffs.Where(
+                                    buff =>
+                                        buff.IsActive &&
+                                        (buff.Type == BuffType.Invulnerability || _immuneBuffs.Contains(buff.Name))))
+                        {
+                            Utilities.DrawTextCentered(
+                                new Vector2(hero.HPBarPosition.X + 75, hero.HPBarPosition.Y + 34),
+                                Menu.Item(Name + "Drawing" + (hero.IsAlly ? "Ally" : "Enemy") + "Color")
+                                    .GetValue<Color>(),
+                                (buff.EndTime - Game.Time).ToString("0.0"));
+                        }
                     }
                 }
             }
@@ -198,15 +227,6 @@ namespace SFXUtility.Feature
 
                     _timers.Menu.AddSubMenu(Menu);
 
-                    _immuneStructs.Add(new ImmuneStruct("eyeforaneye_self.troy", 2f));
-                    _immuneStructs.Add(new ImmuneStruct("zhonyas_ring_activate.troy", 2.5f));
-                    _immuneStructs.Add(new ImmuneStruct("Aatrox_Passive_Death_Activate.troy", 3f));
-                    _immuneStructs.Add(new ImmuneStruct("Aatrox_Skin01_Passive_Death_Activate.troy", 3f));
-                    _immuneStructs.Add(new ImmuneStruct("LifeAura.troy", 4f));
-                    _immuneStructs.Add(new ImmuneStruct("UndyingRage_buf.troy", 5f));
-                    _immuneStructs.Add(new ImmuneStruct("EggTimer.troy", 6f));
-                    _immuneStructs.Add(new ImmuneStruct("nickoftime_tar.troy", 7f));
-
                     Game.OnGameUpdate += OnGameUpdate;
                     GameObject.OnCreate += ObjectOnCreate;
                     Drawing.OnDraw += OnDraw;
@@ -223,6 +243,26 @@ namespace SFXUtility.Feature
         #endregion
 
         #region Nested Types
+
+        private struct ImmuneStruct
+        {
+            #region Fields
+
+            public readonly float Delay;
+            public readonly string SpellName;
+
+            #endregion
+
+            #region Constructors
+
+            public ImmuneStruct(string spellName, float delay)
+            {
+                SpellName = spellName;
+                Delay = delay;
+            }
+
+            #endregion
+        }
 
         private class ImmuneHero
         {
@@ -241,26 +281,6 @@ namespace SFXUtility.Feature
                 TimeUsed = timeUsed;
                 Hero = hero;
                 Struct = iStruct;
-            }
-
-            #endregion
-        }
-
-        private class ImmuneStruct
-        {
-            #region Fields
-
-            public readonly float Delay;
-            public readonly string SpellName;
-
-            #endregion
-
-            #region Constructors
-
-            public ImmuneStruct(string spellName, float delay)
-            {
-                SpellName = spellName;
-                Delay = delay;
             }
 
             #endregion
