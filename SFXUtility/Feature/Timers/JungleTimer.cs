@@ -43,9 +43,9 @@ namespace SFXUtility.Feature
         #region Fields
 
         private const float CheckInterval = 25f;
-        private float _lastCheck = Environment.TickCount;
 
         private readonly List<Camp> _camps = new List<Camp>();
+        private float _lastCheck = Environment.TickCount;
         private Timers _timers;
 
         #endregion
@@ -135,12 +135,12 @@ namespace SFXUtility.Feature
                 if (packet.Header == 195)
                 {
                     var campId = packet.ReadInteger(9);
-                    var emptyType = packet.ReadByte(10);
+                    var emptyType = packet.ReadByte(packet.Size() - 1);
 
-                    if (emptyType == 0)
+                    var camp = _camps.FirstOrDefault(c => c.Id == campId);
+                    if (!Equals(camp, default(Camp)))
                     {
-                        var camp = _camps.FirstOrDefault(c => c.Id == campId);
-                        if (!Equals(camp, default(Camp)))
+                        if (emptyType != 3)
                         {
                             camp.NextRespawnTime = Game.Time + camp.RespawnTime;
                         }
