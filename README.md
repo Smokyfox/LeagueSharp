@@ -31,9 +31,9 @@ Draws various ranges. Turrets, Experience, Spells, AutoAttack.
 
 Trackers
 -----------
-Clone, Waypoint, Last Position
+Cooldown, Clone, Waypoint, Last Position
 
-Not implementet yet: Blink (Flash etc.), Cooldown, Objects (Shrooms, Traps etc.), Recall, Wards
+Not implementet yet: Blink (Flash etc.), Objects (Shrooms, Traps etc.), Recall, Wards
 
 Trinkets
 -----------

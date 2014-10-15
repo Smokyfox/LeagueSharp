@@ -111,7 +111,7 @@ namespace SFXUtility.Feature
 
                     Menu = new Menu(Name, Name);
 
-                    var eMenuItem = new MenuItem(Name + "Enabled", "Enabled").SetValue(false);
+                    var eMenuItem = new MenuItem(Name + "Enabled", "Enabled").SetValue(true);
                     eMenuItem.ValueChanged +=
                         (sender, args) => _enemies.ForEach(enemy => enemy.Active = args.GetNewValue<bool>());
 
@@ -123,7 +123,14 @@ namespace SFXUtility.Feature
                         Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValid && hero.IsEnemy)
                         )
                     {
-                        _enemies.Add(new LastPosition(hero) {Active = Enabled});
+                        try
+                        {
+                            _enemies.Add(new LastPosition(hero) {Active = Enabled});
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.WriteBlock(ex.Message, ex.ToString());
+                        }
                     }
 
                     Initialized = true;
@@ -158,8 +165,8 @@ namespace SFXUtility.Feature
                 var mPos = Drawing.WorldToMinimap(hero.Position);
                 _sprite =
                     new Render.Sprite(
-                        (Bitmap) Resources.ResourceManager.GetObject(string.Format("LP_{0}", hero.ChampionName)),
-                        new Vector2(mPos.X, mPos.Y))
+                        (Bitmap) Resources.ResourceManager.GetObject(string.Format("LP_{0}", hero.ChampionName)) ??
+                        Resources.LP_Aatrox, new Vector2(mPos.X, mPos.Y))
                     {
                         VisibleCondition = delegate
                         {

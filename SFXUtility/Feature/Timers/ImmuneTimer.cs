@@ -42,7 +42,6 @@ namespace SFXUtility.Feature
         #region Fields
 
         private const float CheckInterval = 25f;
-        private float _lastCheck = Environment.TickCount;
 
         private readonly string[] _immuneBuffs =
         {
@@ -63,6 +62,8 @@ namespace SFXUtility.Feature
             new ImmuneStruct("EggTimer.troy", 6f),
             new ImmuneStruct("nickoftime_tar.troy", 7f),
         };
+
+        private float _lastCheck = Environment.TickCount;
 
         private Timers _timers;
 
@@ -108,7 +109,8 @@ namespace SFXUtility.Feature
 
                 foreach (ImmuneHero iHero in _immuneHero.ToList().Where(iHero => iHero.TimeUsed != -1))
                 {
-                    Utilities.DrawTextCentered(Drawing.WorldToScreen(iHero.Hero.Position),
+                    Utilities.DrawTextCentered(
+                        new Vector2(iHero.Hero.HPBarPosition.X + 75f, iHero.Hero.HPBarPosition.Y - 30f),
                         Menu.Item(Name + "Drawing" + (iHero.Hero.IsAlly ? "Ally" : "Enemy") + "Color").GetValue<Color>(),
                         (iHero.TimeUsed - Game.Time + iHero.Struct.Delay).ToString("0.0"));
                 }
@@ -126,7 +128,7 @@ namespace SFXUtility.Feature
                                         (buff.Type == BuffType.Invulnerability || _immuneBuffs.Contains(buff.Name))))
                         {
                             Utilities.DrawTextCentered(
-                                new Vector2(hero.HPBarPosition.X + 75, hero.HPBarPosition.Y + 34),
+                                new Vector2(hero.HPBarPosition.X + 75f, hero.HPBarPosition.Y - 30f),
                                 Menu.Item(Name + "Drawing" + (hero.IsAlly ? "Ally" : "Enemy") + "Color")
                                     .GetValue<Color>(),
                                 (buff.EndTime - Game.Time).ToString("0.0"));

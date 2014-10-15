@@ -88,7 +88,7 @@ namespace SFXUtility
 
         public Version Version
         {
-            get { return new Version(0, 7, 0); }
+            get { return new Version(0, 7, 5, 0); }
         }
 
         #endregion

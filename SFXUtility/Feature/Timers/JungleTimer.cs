@@ -136,7 +136,6 @@ namespace SFXUtility.Feature
                 {
                     var campId = packet.ReadInteger(9);
                     var emptyType = packet.ReadByte(packet.Size() - 1);
-
                     var camp = _camps.FirstOrDefault(c => c.Id == campId);
                     if (!Equals(camp, default(Camp)))
                     {
