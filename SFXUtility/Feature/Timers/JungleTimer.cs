@@ -136,7 +136,7 @@ namespace SFXUtility.Feature
                 {
                     var packet = Packet.S2C.EmptyJungleCamp.Decoded(args.PacketData);
                     var camp = _camps.FirstOrDefault(c => c.Id == packet.CampId);
-                    if (!Equals(camp, default(Camp)))
+                    if (packet.UnitNetworkId != 0 && !Equals(camp, default(Camp)))
                     {
                         if (packet.EmptyType == 0)
                         {
