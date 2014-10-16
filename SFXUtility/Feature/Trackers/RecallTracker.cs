@@ -171,7 +171,13 @@ namespace SFXUtility.Feature
 
                     Menu = new Menu(Name, Name);
 
-                    Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(true));
+                    var eMenuItem = new MenuItem(Name + "Enabled", "Enabled").SetValue(true);
+
+                    eMenuItem.ValueChanged +=
+                        (sender, args) =>
+                            IoC.Resolve<Mediator>().NotifyColleagues(Name + "_Enabled", args.GetNewValue<bool>());
+                    
+                    Menu.AddItem(eMenuItem);
 
                     _trackers.Menu.AddSubMenu(Menu);
 

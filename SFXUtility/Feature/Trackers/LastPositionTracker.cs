@@ -100,6 +100,7 @@ namespace SFXUtility.Feature
                     IoC.Resolve<Mediator>().Register("Recall_Finished", RecallFinished);
                     IoC.Resolve<Mediator>().Register("Recall_Started", RecallStarted);
                     IoC.Resolve<Mediator>().Register("Recall_Aborted", RecallAborted);
+                    IoC.Resolve<Mediator>().Register("Recall_Enabled", RecallEnabled);
                 }
             }
             catch (Exception ex)
@@ -116,6 +117,11 @@ namespace SFXUtility.Feature
             {
                 lastPosition.IsRecalling = false;
             }
+        }
+
+        private void RecallEnabled(object o)
+        {
+            _enemies.ForEach(e => e.Recall = o is bool && (bool) o);
         }
 
         private void RecallFinished(object o)
@@ -190,6 +196,7 @@ namespace SFXUtility.Feature
 
             public readonly Obj_AI_Hero Hero;
             public bool IsRecalling;
+            public bool Recall = true;
             public bool Recalled;
             private readonly Render.Sprite _recallSprite;
             private readonly Render.Sprite _sprite;
@@ -237,7 +244,7 @@ namespace SFXUtility.Feature
                         {
                             try
                             {
-                                if (Recalled)
+                                if (Recall && Recalled)
                                 {
                                     if (!Equals(fountain, default(Obj_Turret)))
                                     {
@@ -264,7 +271,7 @@ namespace SFXUtility.Feature
                         {
                             try
                             {
-                                return Active && !Hero.IsVisible && !Hero.IsDead && IsRecalling;
+                                return Active && !Hero.IsVisible && !Hero.IsDead && Recall && IsRecalling;
                             }
                             catch (Exception ex)
                             {
