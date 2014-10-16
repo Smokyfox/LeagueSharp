@@ -90,7 +90,8 @@ namespace SFXUtility.Feature
 
                 foreach (Camp camp in _camps.Where(camp => !(camp.NextRespawnTime <= 0f)))
                 {
-                    Utilities.DrawTextCentered(camp.MinimapPosition, Menu.Item(Name + "DrawingColor").GetValue<Color>(),
+                    Utilities.DrawTextCentered(Drawing.WorldToMinimap(camp.Position),
+                        Menu.Item(Name + "DrawingColor").GetValue<Color>(),
                         ((int) (camp.NextRespawnTime - Game.Time)).ToString(CultureInfo.InvariantCulture));
                 }
             }
@@ -137,7 +138,7 @@ namespace SFXUtility.Feature
                     var camp = _camps.FirstOrDefault(c => c.Id == packet.CampId);
                     if (!Equals(camp, default(Camp)))
                     {
-                        if (packet.EmptyType != 3)
+                        if (packet.EmptyType == 0)
                         {
                             camp.NextRespawnTime = Game.Time + camp.RespawnTime;
                         }
@@ -283,7 +284,7 @@ namespace SFXUtility.Feature
             #region Fields
 
             public readonly int Id;
-            public readonly Vector2 MinimapPosition;
+            public readonly Vector3 Position;
             public readonly float RespawnTime;
             public float NextRespawnTime;
 
@@ -293,7 +294,7 @@ namespace SFXUtility.Feature
 
             public Camp(Vector3 position, int id, float respawnTime)
             {
-                MinimapPosition = Drawing.WorldToMinimap(position);
+                Position = position;
                 Id = id;
                 RespawnTime = respawnTime;
             }
