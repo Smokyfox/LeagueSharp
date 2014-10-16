@@ -153,6 +153,7 @@ namespace SFXUtility.Feature
                     return;
 
                 Utility.Map.MapType map = Utility.Map.GetMap()._MapType;
+                var points = args.RemainingPoints;
 
                 if ((map == Utility.Map.MapType.SummonersRift || map == Utility.Map.MapType.TwistedTreeline) &&
                     args.NewLevel <= 1)
@@ -162,7 +163,11 @@ namespace SFXUtility.Feature
                     args.NewLevel <= 3)
                     return;
 
-                ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.R);
+                if (args.NewLevel == 6 || args.NewLevel == 11 || args.NewLevel == 16)
+                {
+                    ObjectManager.Player.Spellbook.LevelUpSpell(SpellSlot.R);
+                    points--;
+                }
 
                 if (Menu.Item(Name + "OnlyR").GetValue<bool>())
                     return;
@@ -208,14 +213,18 @@ namespace SFXUtility.Feature
                         }
                         break;
                 }
-                if (mf != null)
+                if (mf != null && points > 0)
                 {
                     ObjectManager.Player.Spellbook.LevelUpSpell(mf.Slot);
+                    points--;
                 }
-
                 foreach (MenuInfo mi in GetOrderedList())
                 {
-                    ObjectManager.Player.Spellbook.LevelUpSpell(mi.Slot);
+                    if (points > 0)
+                    {
+                        ObjectManager.Player.Spellbook.LevelUpSpell(mi.Slot);
+                        points--;
+                    }
                 }
             }
             catch (Exception ex)

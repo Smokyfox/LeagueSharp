@@ -81,7 +81,15 @@ namespace SFXUtility.Feature
 
                 Menu.AddSubMenu(delayMenu);
 
-                Menu.AddItem(new MenuItem(Name + "Enabled", "Enabled").SetValue(true));
+                var eMenuItem = new MenuItem(Name + "Enabled", "Enabled").SetValue(true);
+
+                Menu.AddItem(eMenuItem);
+
+                eMenuItem.ValueChanged +=
+                    delegate(object sender, OnValueChangeEventArgs eventArgs)
+                    {
+                        SpellHumanizer.Enabled = eventArgs.GetNewValue<bool>();
+                    };
 
                 BaseMenu.AddSubMenu(Menu);
 
