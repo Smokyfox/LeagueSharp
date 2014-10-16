@@ -94,10 +94,48 @@ namespace SFXUtility.Feature
                         IoC.Resolve<Mediator>().Register("Trackers_initialized", TrackersLoaded);
                     }
                 }
+
+                if (IoC.IsRegistered<Mediator>())
+                {
+                    IoC.Resolve<Mediator>().Register("Recall_Finished", RecallFinished);
+                    IoC.Resolve<Mediator>().Register("Recall_Started", RecallStarted);
+                    IoC.Resolve<Mediator>().Register("Recall_Aborted", RecallAborted);
+                }
             }
             catch (Exception ex)
             {
                 Logger.WriteBlock(ex.Message, ex.ToString());
+            }
+        }
+
+        private void RecallAborted(object o)
+        {
+            var unitId = o is int ? (int) o : 0;
+            var lastPosition = _enemies.FirstOrDefault(e => e.Hero.NetworkId == unitId);
+            if (!Equals(lastPosition, default(LastPosition)))
+            {
+                lastPosition.IsRecalling = false;
+            }
+        }
+
+        private void RecallFinished(object o)
+        {
+            var unitId = o is int ? (int) o : 0;
+            var lastPosition = _enemies.FirstOrDefault(e => e.Hero.NetworkId == unitId);
+            if (!Equals(lastPosition, default(LastPosition)))
+            {
+                lastPosition.Recalled = true;
+                lastPosition.IsRecalling = false;
+            }
+        }
+
+        private void RecallStarted(object o)
+        {
+            var unitId = o is int ? (int) o : 0;
+            var lastPosition = _enemies.FirstOrDefault(e => e.Hero.NetworkId == unitId);
+            if (!Equals(lastPosition, default(LastPosition)))
+            {
+                lastPosition.IsRecalling = true;
             }
         }
 
@@ -150,7 +188,10 @@ namespace SFXUtility.Feature
         {
             #region Fields
 
-            private readonly Obj_AI_Hero _hero;
+            public readonly Obj_AI_Hero Hero;
+            public bool IsRecalling;
+            public bool Recalled;
+            private readonly Render.Sprite _recallSprite;
             private readonly Render.Sprite _sprite;
             private bool _active;
             private bool _added;
@@ -161,8 +202,16 @@ namespace SFXUtility.Feature
 
             public LastPosition(Obj_AI_Hero hero)
             {
-                _hero = hero;
+                Hero = hero;
                 var mPos = Drawing.WorldToMinimap(hero.Position);
+                var fountain = default(Obj_Turret);
+                foreach (var turret in ObjectManager.Get<Obj_Turret>())
+                {
+                    if (turret.IsValid && turret.IsEnemy && turret.Health >= 9999f)
+                    {
+                        fountain = turret;
+                    }
+                }
                 _sprite =
                     new Render.Sprite(
                         (Bitmap) Resources.ResourceManager.GetObject(string.Format("LP_{0}", hero.ChampionName)) ??
@@ -172,7 +221,50 @@ namespace SFXUtility.Feature
                         {
                             try
                             {
-                                return Active && !_hero.IsVisible && !_hero.IsDead;
+                                if (hero.IsVisible)
+                                {
+                                    Recalled = false;
+                                }
+                                return Active && !Hero.IsVisible && !Hero.IsDead;
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return false;
+                            }
+                        },
+                        PositionUpdate = delegate
+                        {
+                            try
+                            {
+                                if (Recalled)
+                                {
+                                    if (!Equals(fountain, default(Obj_Turret)))
+                                    {
+                                        var p =
+                                            Drawing.WorldToMinimap(
+                                                new Vector2(fountain.Position.X - 500, fountain.Position.Y - 225).To3D());
+                                        return new Vector2(p.X - (_sprite.Size.X/2), p.Y - (_sprite.Size.Y/2));
+                                    }
+                                }
+                                var pos = Drawing.WorldToMinimap(hero.Position);
+                                return new Vector2(pos.X - (_sprite.Size.X/2), pos.Y - (_sprite.Size.Y/2));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return default(Vector2);
+                            }
+                        }
+                    };
+                _recallSprite =
+                    new Render.Sprite(Resources.LP_Recall, new Vector2(mPos.X, mPos.Y))
+                    {
+                        VisibleCondition = delegate
+                        {
+                            try
+                            {
+                                return Active && !Hero.IsVisible && !Hero.IsDead && IsRecalling;
                             }
                             catch (Exception ex)
                             {
@@ -185,7 +277,7 @@ namespace SFXUtility.Feature
                             try
                             {
                                 var pos = Drawing.WorldToMinimap(hero.Position);
-                                return new Vector2(pos.X - (_sprite.Size.X/2), pos.Y - (_sprite.Size.Y/2));
+                                return new Vector2(pos.X - (_recallSprite.Size.X/2), pos.Y - (_recallSprite.Size.Y/2));
                             }
                             catch (Exception ex)
                             {
@@ -221,11 +313,13 @@ namespace SFXUtility.Feature
 
                 if (_active && !_added)
                 {
-                    _sprite.Add(0);
+                    _recallSprite.Add(0);
+                    _sprite.Add(1);
                     _added = true;
                 }
                 else if (!_active && _added)
                 {
+                    _recallSprite.Remove();
                     _sprite.Remove();
                     _added = false;
                 }

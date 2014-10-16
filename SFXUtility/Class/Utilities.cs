@@ -29,6 +29,8 @@ namespace SFXUtility.Class
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
+    using System.Text;
     using LeagueSharp;
     using LeagueSharp.Common;
     using SharpDX;
@@ -58,6 +60,15 @@ namespace SFXUtility.Class
         {
             var rec = Drawing.GetTextExtent(content);
             Drawing.DrawText(pos.X - rec.Width/2f, pos.Y - rec.Height/2f, color, content);
+        }
+
+        public static string GetMd5(string content)
+        {
+            return
+                BitConverter.ToString(
+                    ((HashAlgorithm) CryptoConfig.CreateFromName("MD5")).ComputeHash(new UTF8Encoding().GetBytes(content)))
+                    .Replace("-", string.Empty)
+                    .ToLower();
         }
 
         public static Obj_AI_Minion GetNearestMinionByNames(Vector3 pos, string[] names)

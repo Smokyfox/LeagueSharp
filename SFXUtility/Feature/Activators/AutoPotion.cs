@@ -72,7 +72,7 @@ namespace SFXUtility.Feature
                 MinCharges = 0,
                 ItemId = (ItemId) Item.Pot.TotalBiscuitOfRejuvenation,
                 Priority = 4,
-                TypeList = new List<PotionType> {PotionType.Health, PotionType.Mana}
+                TypeList = new List<PotionType> {PotionType.Health}
             }
         };
 

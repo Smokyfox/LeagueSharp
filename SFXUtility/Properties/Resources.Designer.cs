@@ -953,6 +953,16 @@ namespace SFXUtility.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LP_Recall {
+            get {
+                object obj = ResourceManager.GetObject("LP_Recall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LP_Renekton {
             get {
                 object obj = ResourceManager.GetObject("LP_Renekton", resourceCulture);

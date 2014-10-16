@@ -131,15 +131,13 @@ namespace SFXUtility.Feature
                 if (!Enabled)
                     return;
 
-                var packet = new GamePacket(args.PacketData);
-                if (packet.Header == 195)
+                if (args.PacketData[0] == Packet.S2C.EmptyJungleCamp.Header)
                 {
-                    var campId = packet.ReadInteger(9);
-                    var emptyType = packet.ReadByte(packet.Size() - 1);
-                    var camp = _camps.FirstOrDefault(c => c.Id == campId);
+                    var packet = Packet.S2C.EmptyJungleCamp.Decoded(args.PacketData);
+                    var camp = _camps.FirstOrDefault(c => c.Id == packet.CampId);
                     if (!Equals(camp, default(Camp)))
                     {
-                        if (emptyType != 3)
+                        if (packet.EmptyType != 3)
                         {
                             camp.NextRespawnTime = Game.Time + camp.RespawnTime;
                         }

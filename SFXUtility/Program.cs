@@ -64,6 +64,9 @@ namespace SFXUtility
                     Console.WriteLine(ex.ToString());
                 }
             }
+
+            //container.Register(typeof (Analytics),
+            //    () => Activator.CreateInstance(typeof (Analytics), new object[] {container}), true, true);
         }
 
         #endregion
