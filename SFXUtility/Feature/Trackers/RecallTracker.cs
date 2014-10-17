@@ -153,6 +153,10 @@ namespace SFXUtility.Feature
                     {
                         IoC.Resolve<Mediator>().NotifyColleagues(Name + "_Aborted", packet.UnitNetworkId);
                     }
+                    if (packet.Status == Packet.S2C.Recall.RecallStatus.Unknown)
+                    {
+                        IoC.Resolve<Mediator>().NotifyColleagues(Name + "_Unknown", packet.UnitNetworkId);
+                    }
                 }
             }
             catch (Exception ex)
@@ -190,6 +194,8 @@ namespace SFXUtility.Feature
 
                     Game.OnGameProcessPacket += OnGameProcessPacket;
                     Drawing.OnDraw += OnDraw;
+
+                    IoC.Resolve<Mediator>().NotifyColleagues(Name + "_Enabled", Menu.Item(Name + "Enabled"));
 
                     Initialized = true;
                 }

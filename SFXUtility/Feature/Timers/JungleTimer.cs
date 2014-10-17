@@ -138,7 +138,7 @@ namespace SFXUtility.Feature
                     var camp = _camps.FirstOrDefault(c => c.Id == packet.CampId);
                     if (packet.UnitNetworkId != 0 && !Equals(camp, default(Camp)))
                     {
-                        if (packet.EmptyType == 0)
+                        if (packet.EmptyType != 3)
                         {
                             camp.NextRespawnTime = Game.Time + camp.RespawnTime;
                         }

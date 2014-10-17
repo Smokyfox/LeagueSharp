@@ -100,6 +100,7 @@ namespace SFXUtility.Feature
                     IoC.Resolve<Mediator>().Register("Recall_Finished", RecallFinished);
                     IoC.Resolve<Mediator>().Register("Recall_Started", RecallStarted);
                     IoC.Resolve<Mediator>().Register("Recall_Aborted", RecallAborted);
+                    IoC.Resolve<Mediator>().Register("Recall_Unknown", RecallAborted);
                     IoC.Resolve<Mediator>().Register("Recall_Enabled", RecallEnabled);
                 }
             }
@@ -163,13 +164,25 @@ namespace SFXUtility.Feature
 
                     _trackers.Menu.AddSubMenu(Menu);
 
+                    var recall = false;
+
+                    if (IoC.IsRegistered<RecallTracker>())
+                    {
+                        var rt = IoC.Resolve<RecallTracker>();
+                        if(rt.Initialized)
+                        {
+                            recall = rt.Menu.Item(rt.Name + "Enabled").GetValue<bool>();
+                        }
+                        
+                    }
+
                     foreach (
                         Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValid && hero.IsEnemy)
                         )
                     {
                         try
                         {
-                            _enemies.Add(new LastPosition(hero) {Active = Enabled});
+                            _enemies.Add(new LastPosition(hero) { Active = Enabled, Recall = recall });
                         }
                         catch (Exception ex)
                         {
@@ -196,7 +209,7 @@ namespace SFXUtility.Feature
 
             public readonly Obj_AI_Hero Hero;
             public bool IsRecalling;
-            public bool Recall = true;
+            public bool Recall;
             public bool Recalled;
             private readonly Render.Sprite _recallSprite;
             private readonly Render.Sprite _sprite;
