@@ -109,7 +109,7 @@ namespace SFXUtility.Feature
             if (!drawFriendly && !drawEnemy && !drawSelf)
                 return;
 
-            var color = Menu.Item(Name + "AttackColor").GetValue<Color>();
+            var color = Menu.Item(Name + "ExperienceColor").GetValue<Color>();
             var circleThickness = BaseMenu.Item("MiscCircleThickness").GetValue<Slider>().Value;
 
             var distanceLimitEnabled = Menu.Item(Name + "DistanceEnabled").GetValue<bool>();
