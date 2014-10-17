@@ -2,7 +2,7 @@
 
 /*
  Copyright 2014 - 2014 Nikita Bernthaler
- LastPositionTracker.cs is part of SFXUtility.
+ lastpositiontracker.cs is part of SFXUtility.
  
  SFXUtility is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -169,11 +169,10 @@ namespace SFXUtility.Feature
                     if (IoC.IsRegistered<RecallTracker>())
                     {
                         var rt = IoC.Resolve<RecallTracker>();
-                        if(rt.Initialized)
+                        if (rt.Initialized)
                         {
                             recall = rt.Menu.Item(rt.Name + "Enabled").GetValue<bool>();
                         }
-                        
                     }
 
                     foreach (
@@ -182,7 +181,7 @@ namespace SFXUtility.Feature
                     {
                         try
                         {
-                            _enemies.Add(new LastPosition(hero) { Active = Enabled, Recall = recall });
+                            _enemies.Add(new LastPosition(hero) {Active = Enabled, Recall = recall});
                         }
                         catch (Exception ex)
                         {
@@ -224,14 +223,8 @@ namespace SFXUtility.Feature
             {
                 Hero = hero;
                 var mPos = Drawing.WorldToMinimap(hero.Position);
-                var fountain = default(Obj_Turret);
-                foreach (var turret in ObjectManager.Get<Obj_Turret>())
-                {
-                    if (turret.IsValid && turret.IsEnemy && turret.Health >= 9999f)
-                    {
-                        fountain = turret;
-                    }
-                }
+                var spawnPoint = ObjectManager.Get<GameObject>().FirstOrDefault(s => s is Obj_SpawnPoint && s.IsEnemy);
+
                 _sprite =
                     new Render.Sprite(
                         (Bitmap) Resources.ResourceManager.GetObject(string.Format("LP_{0}", hero.ChampionName)) ??
@@ -259,11 +252,10 @@ namespace SFXUtility.Feature
                             {
                                 if (Recall && Recalled)
                                 {
-                                    if (!Equals(fountain, default(Obj_Turret)))
+                                    if (!Equals(spawnPoint, default(Obj_SpawnPoint)))
                                     {
                                         var p =
-                                            Drawing.WorldToMinimap(
-                                                new Vector2(fountain.Position.X - 500, fountain.Position.Y - 225).To3D());
+                                            Drawing.WorldToMinimap(spawnPoint.Position);
                                         return new Vector2(p.X - (_sprite.Size.X/2), p.Y - (_sprite.Size.Y/2));
                                     }
                                 }
