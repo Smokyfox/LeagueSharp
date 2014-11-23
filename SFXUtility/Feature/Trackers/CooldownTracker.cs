@@ -240,8 +240,8 @@ namespace SFXUtility.Feature
                // 
               //  {
                foreach (var sSlot in _summonerSpellSlots) {
-                   for (int i = 0; i < _summonerSpellSlots.Length; i++) 
-                    var index = i;
+                   //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
+                   // var index = i;
                     var spell = Hero.SummonerSpellbook.GetSpell(sSlot);
                     Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
@@ -275,7 +275,7 @@ namespace SFXUtility.Feature
                                               ? (spell.CooldownExpires - Game.Time)/spell.Cooldown
                                               : 1f)))
                                     : 19), 12, 12));
-                            return new Vector2(HpBarPostion.X + 3, HpBarPostion.Y + 1 + index*13);
+                            return new Vector2(HpBarPostion.X + 3, HpBarPostion.Y + 1 + 1*13);
                         }
                         catch (Exception ex)
                         {
@@ -304,7 +304,7 @@ namespace SFXUtility.Feature
                             try
                             {
                                 return new Vector2(HpBarPostion.X - 5 - text.text.Length*5,
-                                    HpBarPostion.Y + 1 + 13*index);
+                                    HpBarPostion.Y + 1 + 13*1);
                             }
                             catch (Exception ex)
                             {
