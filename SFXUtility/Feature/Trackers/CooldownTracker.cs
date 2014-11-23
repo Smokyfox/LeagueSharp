@@ -193,7 +193,8 @@ namespace SFXUtility.Feature
             private readonly SpellSlot[] _spellSlots = {SpellSlot.Q, SpellSlot.W, SpellSlot.E, SpellSlot.R};
             private readonly List<Render.Text> _spellTexts = new List<Render.Text>();
 
-            private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
+           // private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
+             public static SpellSlot[] _SummonerSpellSlots = { ((SpellSlot) 4), ((SpellSlot) 5) };
             private readonly List<Render.Text> _summonerSpellTexts = new List<Render.Text>();
             private readonly List<Render.Sprite> _summonerSprites = new List<Render.Sprite>();
 
