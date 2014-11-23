@@ -274,7 +274,7 @@ namespace SFXUtility.Feature
                                               ? (spell.CooldownExpires - Game.Time)/spell.Cooldown
                                               : 1f)))
                                     : 19), 12, 12));
-                            return new Vector2(HpBarPostion.X + 3, HpBarPostion.Y + 1 + index*13);
+                            return new Vector2(HpBarPostion.X + 3, HpBarPostion.Y + 1 + 13);
                         }
                         catch (Exception ex)
                         {
