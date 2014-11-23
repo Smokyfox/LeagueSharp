@@ -237,10 +237,10 @@ namespace SFXUtility.Feature
                         }
                     };
 
-               // for (int i = 0; i < _summonerSpellSlots.Length; i++)
+               // 
               //  {
                foreach (var sSlot in _summonerSpellSlots) {
-                    i = 0;
+                   for (int i = 0; i < _summonerSpellSlots.Length; i++) { }
                     var index = i;
                     var spell = Hero.SummonerSpellbook.GetSpell(sSlot);
                     Game.PrintChat(spell.Name);
