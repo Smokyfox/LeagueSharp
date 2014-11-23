@@ -241,6 +241,7 @@ namespace SFXUtility.Feature
                 {
                     var index = i;
                     var spell = Hero.SummonerSpellbook.GetSpell(_spellSlots[index]);
+                    Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
                                    Resources.CD_summonerbarrier;
                     var sprite = new Render.Sprite((Bitmap) summoner, default(Vector2))
