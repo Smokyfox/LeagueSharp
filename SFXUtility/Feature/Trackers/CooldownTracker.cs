@@ -237,13 +237,13 @@ namespace SFXUtility.Feature
                         }
                     };
 
-               Game.PrintChat(_summonerSpellSlots.Length);
+               Game.PrintChat(_summonerSpellSlots.Length.ToString());
                 for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                 {
               // foreach (var sSlot in _summonerSpellSlots) {
                    //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
-                   // var index = i;
-                    var spell = Hero.SummonerSpellbook.GetSpell(sSlot);
+                    var index = i;
+                    var spell = Hero.SummonerSpellbook.GetSpell(_summonerSpellSlots[index]);
                    // Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
                                    Resources.CD_summonerbarrier;
