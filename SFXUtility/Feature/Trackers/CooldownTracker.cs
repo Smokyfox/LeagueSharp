@@ -237,7 +237,7 @@ namespace SFXUtility.Feature
                         }
                     };
 
-               Game.PrintChat(_summonerSpellSlots.Length.ToString());
+             //  Game.PrintChat(_summonerSpellSlots.Length.ToString());
                 for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                 {
               // foreach (var sSlot in _summonerSpellSlots) {
@@ -284,7 +284,7 @@ namespace SFXUtility.Feature
                             return default(Vector2);
                         }
                     };
-                    var text = new Render.Text(default(Vector2), string.Empty, 13, Color.White)
+                    var text = new Render.Text(default(Vector2), string.Empty, index*13, Color.White)
                     {
                         VisibleCondition = delegate
                         {
@@ -305,7 +305,7 @@ namespace SFXUtility.Feature
                             try
                             {
                                 return new Vector2(HpBarPostion.X - 5 - text.text.Length*5,
-                                    HpBarPostion.Y + 1 + 13*1);
+                                    HpBarPostion.Y + 1 + 13*index);
                             }
                             catch (Exception ex)
                             {
