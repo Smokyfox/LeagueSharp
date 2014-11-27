@@ -196,37 +196,37 @@ namespace SFXUtility.Feature
                         _camps.Add(new Camp(new Vector3(3388.2f, 7697.2f, 55.2f), 1, 300f));
 
                         // Blue: Wolves
-                        _camps.Add(new Camp(new Vector3(3415.8f, 6269.6f, 55.6f), 2, 50f));
+                        _camps.Add(new Camp(new Vector3(3415.8f, 6269.6f, 55.6f), 2, 100f));
 
                         // Blue: Wraiths
-                        _camps.Add(new Camp(new Vector3(6447f, 5384f, 60f), 3, 50f));
+                        _camps.Add(new Camp(new Vector3(6447f, 5384f, 60f), 3, 100f));
 
                         // Blue: Red Buff
                         _camps.Add(new Camp(new Vector3(7509.4f, 3977.1f, 56.9f), 4, 300f));
 
                         // Blue: Golems
-                        _camps.Add(new Camp(new Vector3(8042.2f, 2274.3f, 54.3f), 5, 50f));
+                        _camps.Add(new Camp(new Vector3(8042.2f, 2274.3f, 54.3f), 5, 100f));
 
                         // Blue: Wight
-                        _camps.Add(new Camp(new Vector3(1859.1f, 8246.3f, 54.9f), 13, 50f));
+                        _camps.Add(new Camp(new Vector3(1859.1f, 8246.3f, 54.9f), 13, 100f));
 
                         // Red: Blue Buff
                         _camps.Add(new Camp(new Vector3(10440f, 6717.9f, 54.9f), 7, 300f));
 
                         // Red: Wolves
-                        _camps.Add(new Camp(new Vector3(10575f, 8083f, 65.5f), 8, 50f));
+                        _camps.Add(new Camp(new Vector3(10575f, 8083f, 65.5f), 8, 100f));
 
                         // Red: Wraiths
-                        _camps.Add(new Camp(new Vector3(7534.3f, 9226.5f, 55.5f), 9, 50f));
+                        _camps.Add(new Camp(new Vector3(7534.3f, 9226.5f, 55.5f), 9, 100f));
 
                         // Red: Red Buff
                         _camps.Add(new Camp(new Vector3(6558.2f, 10524.9f, 54.6f), 10, 300f));
 
                         // Red: Golems
-                        _camps.Add(new Camp(new Vector3(6005f, 12055f, 39.6f), 11, 50f));
+                        _camps.Add(new Camp(new Vector3(6005f, 12055f, 39.6f), 11, 100f));
 
                         // Red: Wight
-                        _camps.Add(new Camp(new Vector3(12287f, 6205f, 54.8f), 14, 50f));
+                        _camps.Add(new Camp(new Vector3(12287f, 6205f, 54.8f), 14, 100f));
 
                         // Neutral: Dragon
                         _camps.Add(new Camp(new Vector3(9606.8f, 4210.5f, -60.3f), 6, 360f));
