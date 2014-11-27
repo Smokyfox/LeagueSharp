@@ -193,7 +193,8 @@ namespace SFXUtility.Feature
             private readonly SpellSlot[] _spellSlots = {SpellSlot.Q, SpellSlot.W, SpellSlot.E, SpellSlot.R};
             private readonly List<Render.Text> _spellTexts = new List<Render.Text>();
 
-            private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
+           // private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
+             private readonly SpellSlot[] _summonerSpellSlots = { ((SpellSlot) 4), ((SpellSlot) 5) };
             private readonly List<Render.Text> _summonerSpellTexts = new List<Render.Text>();
             private readonly List<Render.Sprite> _summonerSprites = new List<Render.Sprite>();
 
@@ -236,10 +237,14 @@ namespace SFXUtility.Feature
                         }
                     };
 
-                for (int i = 0; i < _summonerSpellSlots.Length; i++)
+             //  Game.PrintChat(_summonerSpellSlots.Length.ToString());
+                for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                 {
+              // foreach (var sSlot in _summonerSpellSlots) {
+                   //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                     var index = i;
-                    var spell = Hero.SummonerSpellbook.GetSpell(_spellSlots[index]);
+                    var spell = Hero.SummonerSpellbook.GetSpell(_summonerSpellSlots[index]);
+                   // Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
                                    Resources.CD_summonerbarrier;
                     var sprite = new Render.Sprite((Bitmap) summoner, default(Vector2))
@@ -279,7 +284,7 @@ namespace SFXUtility.Feature
                             return default(Vector2);
                         }
                     };
-                    var text = new Render.Text(default(Vector2), string.Empty, 13, Color.White)
+                    var text = new Render.Text(default(Vector2), string.Empty, index*13, Color.White)
                     {
                         VisibleCondition = delegate
                         {

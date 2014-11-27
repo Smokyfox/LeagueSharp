@@ -86,9 +86,9 @@ namespace SFXUtility
             get { return "SFXUtility"; }
         }
 
-        public Version Version
+        public System.Version Version
         {
-            get { return new Version(0, 7, 6, 0); }
+            get { return new System.Version(0, 7, 6, 0); }
         }
 
         #endregion
