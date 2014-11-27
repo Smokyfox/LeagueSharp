@@ -229,7 +229,7 @@ namespace SFXUtility.Feature
                         _camps.Add(new Camp(new Vector3(12287f, 6205f, 54.8f), 14, 100f));
                         
                             //Neutral: Crab Red Side
-                           _camps.Add(new Camp(new Vector3(10554f, 10524.9f, 54.8f), 15, 180f));
+                           _camps.Add(new Camp(new Vector3(10554f, 5836f, 54.8f), 15, 180f));
                            
                         //Neutral: Crab Blue Side
                            _camps.Add(new Camp(new Vector3(4545f, 9136f, 55.2f), 16, 180f));
