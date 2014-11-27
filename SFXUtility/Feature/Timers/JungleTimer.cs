@@ -227,6 +227,9 @@ namespace SFXUtility.Feature
 
                         // Red: Wight
                         _camps.Add(new Camp(new Vector3(12287f, 6205f, 54.8f), 14, 100f));
+                        
+                        //Neutral: Crab
+                           _camps.Add(new Camp(new Vector3(3000f, 9000f, 54.8f), 15, 180f));
 
                         // Neutral: Dragon
                         _camps.Add(new Camp(new Vector3(9606.8f, 4210.5f, -60.3f), 6, 360f));
